@@ -17,13 +17,15 @@
 	- Using VM entries, a VMM can then turn guests into VMs (one at a time). The VMM effects a VM entry using instructions VMLAUNCH and VMRESUME; it regains control using VM exits.
 	- VM exits transfer control to an entry point specified by the VMM. The VMM can take action appropriate to the cause of the VM exit and can then return to the VM using a VM entry.
 	- Eventually, the VMM may decide to shut itself down and leave VMX operation. It does so by executing the VMXOFF instruction.
-	
-	![VMX transitions](https://raw.githubusercontent.com/LordNoteworthy/cpu-internals/master/figures/Interaction%20of%20a%20Virtual-Machine%20Monitor%20and%20Guests.png)
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/LordNoteworthy/cpu-internals/master/figures/Interaction%20of%20a%20Virtual-Machine%20Monitor%20and%20Guests.png" alt="VMX transition"/>
+</p>
 
 #### Virtual-machine Control Structure
 * VMCS is a data structure which control the behavior of processor in VMX non-root mode and control VMX transitions.
 * Access to the VMCS is managed through a component of processor state called the VMCS pointer (one per logical processor).
-* The VMCS pointer (64-bit) contain the physical address of the the VMCS and should be aligned to a 4-KB boundary.
+* The VMCS pointer (64-bit) contain the physical address of the the VMCS region and should be aligned to a 4-KB boundary.
 * The VMCS pointer is read and written using the instructions VMPTRST and VMPTRLD. 
 * The VMM configures a VMCS using the VMREAD, VMWRITE, and VMCLEAR instructions.
 * A VMM can use a different VMCS for each VM that it supports.
@@ -34,3 +36,13 @@
 * This is achieved by executing cpuid (1) and checking if ECX.VMX (bit 5) = 1, them VMX operations is supported.
 * The VMX architecture is designed to be extensible so that future processors in VMX operation can support additional features not present in first-generation implementations of the VMX architecture. 
 * The availability of extensible VMX features is reported to software using a set of VMX capability MSRs.
+
+#### Enabling And Entering VMX Operation:
+* Before system software can enter VMX operation, it enables VMX by setting CR4.VMXE[bit 13] = 1. 
+* VMXON causes an invalid-opcode exception (#UD) if executed with CR4.VMXE = 0.
+* Once in VMX operation, it is not possible to clear CR4.VMXE. CR4.VMXE can be cleared outside of VMX operation after executing of VMXOFF.
+* VMXON is also controlled by the IA32_FEATURE_CONTROL MSR (MSR address 3AH). The relevant bits of the MSR are:
+	- Bit 0 is the lock bit: If this bit is 0, VMXON causes a #GP exception. If the lock bit is 1, WRMSR to this MSR causes a #GP exception. 
+	- Bit 1 enables VMXON in SMX operation: If this bit is 0, execution of VMXON in SMX operation causes a #GP exception.
+	- Bit 2 enables VMXON outside SMX operation. If this bit is 0, execution of VMXON outside SMX operation causes a #GP exception.
+* To enable VMX support in a platform, BIOS must set bit 1, bit 2, or both , as well as the lock bit.
