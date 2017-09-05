@@ -17,7 +17,8 @@
 	- Using VM entries, a VMM can then turn guests into VMs (one at a time). The VMM effects a VM entry using instructions VMLAUNCH and VMRESUME; it regains control using VM exits.
 	- VM exits transfer control to an entry point specified by the VMM. The VMM can take action appropriate to the cause of the VM exit and can then return to the VM using a VM entry.
 	- Eventually, the VMM may decide to shut itself down and leave VMX operation. It does so by executing the VMXOFF instruction.
-	 ![VMX transitions](https://raw.githubusercontent.com/LordNoteworthy/cpu-internals/master/figures/Interaction%20of%20a%20Virtual-Machine%20Monitor%20and%20Guests.png)
+	
+	![VMX transitions](https://raw.githubusercontent.com/LordNoteworthy/cpu-internals/master/figures/Interaction%20of%20a%20Virtual-Machine%20Monitor%20and%20Guests.png)
 
 #### Virtual-machine Control Structure
 * VMCS is a data structure which control the behavior of processor in VMX non-root mode and control VMX transitions.
@@ -27,3 +28,9 @@
 * The VMM configures a VMCS using the VMREAD, VMWRITE, and VMCLEAR instructions.
 * A VMM can use a different VMCS for each VM that it supports.
 * For a VM with multiple Logical Processors(LPs) or Virtual CPUs (vCPUs), the VMM can use a different VMCS for each vCPU.
+
+##### Discovering Support For VMX:
+* Before system software enters into VMX operation, it must discover the presence of VMX support in the processor.
+* This is achieved by executing cpuid (1) and checking if ECX.VMX (bit 5) = 1, them VMX operations is supported.
+* The VMX architecture is designed to be extensible so that future processors in VMX operation can support additional features not present in first-generation implementations of the VMX architecture. 
+* The availability of extensible VMX features is reported to software using a set of VMX capability MSRs.
