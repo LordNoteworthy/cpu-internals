@@ -59,5 +59,26 @@
 * Executing a VMLAUNCH instruction requires a VMCS whose launch state is “clear” and makes the launch state "launched".
 * Executing a VMRESUME instruction requires a VMCS whose launch state is “launched”.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/LordNoteworthy/cpu-internals/master/figures/States%20of%20VMCS%20X.png" alt="States of VMCS X"/>
+</p>
 
+#### Format Of The VMCS Region:
+* A VMCS region comprises up tp 4KB. To determine the exact size of the VMCS region, check VMX capability MSR IA32_VMX_BASIC.
+* The format of a VMCS is structured as below:
 
+| Byte Offset | Contents |
+| --- | --- |
+| 0 | Bits 30:0: VMCS revision identifier, Bit 31: shadow-VMCS indicator |
+| 4 | VMX-abort indicator |
+| 8 | VMCS data (implementation-specific format) |
+
+* The first 4 bytes of the VMCS region contain the VMCS revision identifier at bits 30:0. This helps to avoid using a VMCS region formatted for one processor on a processor that uses a different format.
+* Software can discover the VMCS revision identifier that a processor uses by reading the VMX capability MSR IA32_VMX_BASIC.
+* VMPTRLD fails if its operand references a VMCS region whose VMCS revision identifier differs from that used by the processor. 
+* Bit 31 of this 4-byte region indicates whether the VMCS is a shadow VMCS.
+* Software can discover support for this setting by reading the VMX capability MSR IA32_VMX_PROCBASED_CTLS2
+* VMPTRLD fails if the shadow-VMCS indicator is set and the processor does not support the 1-setting of the “VMCS shadowing” VM-execution control.
+* The next 4 bytes of the VMCS region are used for the VMX-abort indicator. The contents of these bits do not control processor operation in any way. A logical processor writes a non-zero value into these bits if a VMX abort occurs. Software may also write into this field.
+* The remainder of the VMCS region is used for VMCS data (those parts of the VMCS that control VMX non-root operation and the VMX transitions). The format of these data is implementation-specific.
+* To ensure proper behavior in VMX operation, software should maintain the VMCS region and related structures in writeback cacheable memory, check the VMX capability MSR IA32_VMX_BASIC.
