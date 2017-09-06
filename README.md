@@ -1,17 +1,17 @@
 # cpu-internals
 
-#### Virtual Machine Architecture:
+### Virtual Machine Architecture:
 * Virtual Machine Monitor (VMM) aka (Hypervisor) act as host and has full control of the processor(s) and the hardware (physical memory, interrupt management and  I/O).
 * It provides the guest or the (Virtual Machine) with an abstraction of a virtual processor, allowing it to think it is execute directly on the logical processor.
 
-#### Introduction To VMX Operation:
+### Introduction To VMX Operation:
 * Processor support for virtualization is provided by a form of processor operation called VMX (Virtual Machine eXtensions).
 * There are two kind of VMX operations:
 	- VMX root operation (VMM will generally run here).
 	- VMX non-root operation (VM will generally run here).
 - The main differences between these two modes is that in root mode, a new set of new instructions (VMX instructions) is available and that the values that can be loaded into certain control registers are limited.
 
-#### Life Cycle of VMM Software:
+### Life Cycle of VMM Software:
 * The following items summarize the life cycle of a VMM and its guest software as well as the interactions between them:
 	- Software enters VMX operation by executing a VMXON instruction.
 	- Using VM entries, a VMM can then turn guests into VMs (one at a time). The VMM effects a VM entry using instructions VMLAUNCH and VMRESUME; it regains control using VM exits.
@@ -22,7 +22,7 @@
   <img src="https://raw.githubusercontent.com/LordNoteworthy/cpu-internals/master/figures/Interaction%20of%20a%20Virtual-Machine%20Monitor%20and%20Guests.png" alt="VMX transition"/>
 </p>
 
-#### Virtual-machine Control Structure
+### Virtual-machine Control Structure
 * VMCS is a data structure which control the behavior of processor in VMX non-root mode and control VMX transitions.
 * Access to the VMCS is managed through a component of processor state called the VMCS pointer (one per logical processor).
 * The VMCS pointer (64-bit) contain the physical address of the the VMCS region and should be aligned to a 4-KB boundary.
@@ -31,13 +31,13 @@
 * A VMM can use a different VMCS for each VM that it supports.
 * For a VM with multiple Logical Processors(LPs) or Virtual CPUs (vCPUs), the VMM can use a different VMCS for each vCPU.
 
-#### Discovering Support For VMX:
+### Discovering Support For VMX:
 * Before system software enters into VMX operation, it must discover the presence of VMX support in the processor.
 * This is achieved by executing cpuid (1) and checking if ECX.VMX (bit 5) = 1, them VMX operations is supported.
 * The VMX architecture is designed to be extensible so that future processors in VMX operation can support additional features not present in first-generation implementations of the VMX architecture. 
 * The availability of extensible VMX features is reported to software using a set of VMX capability MSRs.
 
-#### Enabling And Entering VMX Operation:
+### Enabling And Entering VMX Operation:
 * Before system software can enter VMX operation, it enables VMX by setting CR4.VMXE[bit 13] = 1. 
 * VMXON causes an invalid-opcode exception (#UD) if executed with CR4.VMXE = 0.
 * Once in VMX operation, it is not possible to clear CR4.VMXE. CR4.VMXE can be cleared outside of VMX operation after executing of VMXOFF.
@@ -47,7 +47,7 @@
 	- Bit 2 enables VMXON outside SMX operation. If this bit is 0, execution of VMXON outside SMX operation causes a #GP exception.
 * To enable VMX support in a platform, BIOS must set bit 1, bit 2, or both , as well as the lock bit.
 
-#### Restrictions On VMX Operation:
+### Restrictions On VMX Operation:
 * VMX operation places restrictions on processor operation:
     - In VMX operation, processors may fix certain bits in CR0 and CR4 to specific values and not support other values. VMXON fails if any of these bits contains an unsupported value.
     - Any attempt to set one of these bits to an unsupported value while in VMX operation using any of the CLTS, LMSW, or MOV CR instructions causes a #GP exception. VM entry or VM exit cannot set any of these bits to an unsupported value.
@@ -59,7 +59,7 @@
 * The restrictions on CR0.PE and CR0.PG imply that VMX operation is supported only in paged protected mode. Therefore, guest software cannot be run in unpaged protected mode or in real-address mode.
 * Later processors support a VM-execution control called “unrestricted guest”. If this control is 1, CR0.PE and CR0.PG may be 0 in VMX non-root operation (even if the capability MSR IA32_VMX_CR0_FIXED0 reports otherwise). Such processors allow guest software to run in unpaged protected mode or in real-address mode.
 
-#### Overview:
+### Overview:
 * At any given time, at most one of the active VMCSs is the current VMCS. 
 * The VMLAUNCH, VMREAD, VMRESUME, and VMWRITE instructions operate only on the current VMCS.
 * The VMCS link pointer field in the current VMCS is itself the address of a VMCS.
@@ -74,7 +74,7 @@
   <img src="https://raw.githubusercontent.com/LordNoteworthy/cpu-internals/master/figures/States%20of%20VMCS%20X.png" alt="States of VMCS X"/>
 </p>
 
-#### Format Of The VMCS Region:
+### Format Of The VMCS Region:
 * A VMCS region comprises up tp 4KB. To determine the exact size of the VMCS region, check VMX capability MSR IA32_VMX_BASIC.
 * The format of a VMCS is structured as below:
 
@@ -93,3 +93,12 @@
 * The next 4 bytes of the VMCS region are used for the VMX-abort indicator. The contents of these bits do not control processor operation in any way. A logical processor writes a non-zero value into these bits if a VMX abort occurs. Software may also write into this field.
 * The remainder of the VMCS region is used for VMCS data (those parts of the VMCS that control VMX non-root operation and the VMX transitions). The format of these data is implementation-specific.
 * To ensure proper behavior in VMX operation, software should maintain the VMCS region and related structures in writeback cacheable memory, check the VMX capability MSR IA32_VMX_BASIC.
+
+### Organization Of VMCS Data:
+The VMCS data are organized into six logical groups:
+	* Guest-state area: Processor state is saved into the guest-state area on VM exits and loaded from there on VM entries.
+	* Host-state area: Processor state is loaded from the host-state area on VM exits.
+	* VM-execution control fields: These fields control processor behavior in VMX non-root operation. They determine in part the causes of VM exits.
+	* VM-exit control fields: These fields control VM exits.
+	* VM-entry control fields: These fields control VM entries.
+	* VM-exit information fields: These fields receive information on VM exits and describe the cause and the nature of VM exits. On some processors, these fields are read-only.
