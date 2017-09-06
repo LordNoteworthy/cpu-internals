@@ -31,7 +31,7 @@
 * A VMM can use a different VMCS for each VM that it supports.
 * For a VM with multiple Logical Processors(LPs) or Virtual CPUs (vCPUs), the VMM can use a different VMCS for each vCPU.
 
-##### Discovering Support For VMX:
+#### Discovering Support For VMX:
 * Before system software enters into VMX operation, it must discover the presence of VMX support in the processor.
 * This is achieved by executing cpuid (1) and checking if ECX.VMX (bit 5) = 1, them VMX operations is supported.
 * The VMX architecture is designed to be extensible so that future processors in VMX operation can support additional features not present in first-generation implementations of the VMX architecture. 
@@ -46,3 +46,18 @@
 	- Bit 1 enables VMXON in SMX operation: If this bit is 0, execution of VMXON in SMX operation causes a #GP exception.
 	- Bit 2 enables VMXON outside SMX operation. If this bit is 0, execution of VMXON outside SMX operation causes a #GP exception.
 * To enable VMX support in a platform, BIOS must set bit 1, bit 2, or both , as well as the lock bit.
+
+
+#### Overview:
+* At any given time, at most one of the active VMCSs is the current VMCS. 
+* The VMLAUNCH, VMREAD, VMRESUME, and VMWRITE instructions operate only on the current VMCS.
+* The VMCS link pointer field in the current VMCS is itself the address of a VMCS.
+* If VM entry is performed successfully with the 1-setting of the “VMCS shadowing” VM-execution control, the VMCS referenced by the VMCS link pointer field becomes active on the logical processor. The identity of the current VMCS does not change.
+* The launch state of a VMCS determines which VM-entry instruction should be used with that VMCS.
+* Executing a VMPTRLD makes the VMCS is both active and current on the LP. 
+* Executing a VMCLEAR makes the VMCS neither active nor current on the LP.
+* Executing a VMLAUNCH instruction requires a VMCS whose launch state is “clear” and makes the launch state "launched".
+* Executing a VMRESUME instruction requires a VMCS whose launch state is “launched”.
+
+
+
