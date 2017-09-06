@@ -47,6 +47,17 @@
 	- Bit 2 enables VMXON outside SMX operation. If this bit is 0, execution of VMXON outside SMX operation causes a #GP exception.
 * To enable VMX support in a platform, BIOS must set bit 1, bit 2, or both , as well as the lock bit.
 
+#### Restrictions On VMX Operation:
+* VMX operation places restrictions on processor operation:
+    - In VMX operation, processors may fix certain bits in CR0 and CR4 to specific values and not support other values. VMXON fails if any of these bits contains an unsupported value.
+    - Any attempt to set one of these bits to an unsupported value while in VMX operation using any of the CLTS, LMSW, or MOV CR instructions causes a #GP exception. VM entry or VM exit cannot set any of these bits to an unsupported value.
+* Software should consult the VMX capability:
+    - MSRs IA32_VMX_CR0_FIXED0 and IA32_VMX_CR0_FIXED1 to determine how bits are fixed for CR0.
+    - MSRs IA32_VMX_CR4_FIXED0 and IA32_VMX_CR4_FIXED1 to determine how bits are fixed for CR4.
+* The first processors to support VMX operation require that the following bits be 1 in VMX operation:
+    * CR0.PE, CR0.NE, CR0.PG, and CR4.VMXE.
+* The restrictions on CR0.PE and CR0.PG imply that VMX operation is supported only in paged protected mode. Therefore, guest software cannot be run in unpaged protected mode or in real-address mode.
+* Later processors support a VM-execution control called “unrestricted guest”. If this control is 1, CR0.PE and CR0.PG may be 0 in VMX non-root operation (even if the capability MSR IA32_VMX_CR0_FIXED0 reports otherwise). Such processors allow guest software to run in unpaged protected mode or in real-address mode.
 
 #### Overview:
 * At any given time, at most one of the active VMCSs is the current VMCS. 
