@@ -96,9 +96,9 @@
 
 ### Organization Of VMCS Data:
 The VMCS data are organized into six logical groups:
-	* Guest-state area: Processor state is saved into the guest-state area on VM exits and loaded from there on VM entries.
-	* Host-state area: Processor state is loaded from the host-state area on VM exits.
-	* VM-execution control fields: These fields control processor behavior in VMX non-root operation. They determine in part the causes of VM exits.
-	* VM-exit control fields: These fields control VM exits.
-	* VM-entry control fields: These fields control VM entries.
-	* VM-exit information fields: These fields receive information on VM exits and describe the cause and the nature of VM exits. On some processors, these fields are read-only.
+* Guest-state area: Processor state is saved into the guest-state area on VM exits and loaded from there on VM entries.
+* Host-state area: Processor state is loaded from the host-state area on VM exits.
+* VM-execution control fields: These fields control processor behavior in VMX non-root operation. They determine in part the causes of VM exits.
+* VM-exit control fields: These fields control VM exits.
+* VM-entry control fields: These fields control VM entries.
+* VM-exit information fields: These fields receive information on VM exits and describe the cause and the nature of VM exits. On some processors, these fields are read-only.
