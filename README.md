@@ -104,4 +104,4 @@ The VMCS data are organized into six logical groups:
 * VM-exit information fields: These fields receive information on VM exits and describe the cause and the nature of VM exits. On some processors, these fields are read-only.
 
 #### VMCS Layout:
-* The VMCS layout is available in a form of table here: [VMCS Layout.pdf](../blob/master/pdf/VMCS.pdf)
+* The VMCS layout is available in a form of table here: [VMCS Layout.pdf](../master/pdf/VMCS.pdf)
