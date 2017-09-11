@@ -102,3 +102,6 @@ The VMCS data are organized into six logical groups:
 * VM-exit control fields: These fields control VM exits.
 * VM-entry control fields: These fields control VM entries.
 * VM-exit information fields: These fields receive information on VM exits and describe the cause and the nature of VM exits. On some processors, these fields are read-only.
+
+#### VMCS Layout:
+* The VMCS layout is available in a form of table here: [I'm an inline-style link](../blob/master/pdf/VMCS.pdf)
