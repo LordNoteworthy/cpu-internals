@@ -1,0 +1,36 @@
+## Overview of The System Level Architecture
+- System-level architecture consists of a set of registers, data structures, and instructions designed to support basic system-level operations such as memory management, interrupt and exception handling, task management, and control of multiple processors
+
+![Imgur](https://i.imgur.com/O0QCFwt.png)
+
+## Global and Local Descriptor Tables
+- When operating in protected mode, all memory accesses pass through either the global descriptor table (GDT) or an optional local descriptor table (LDT).
+- These tables contain entries called segment descriptors.
+- Segment descriptors (8 byte large) provide the base address of segments well as access rights, type, and usage information.
+- Each segment descriptor has an associated segment selector.
+- A segment selector provides the software that uses it with an index into the GDT or LDT (the offset of its associated segment descriptor), a global/local flag (determines whether the selector points to the GDT or the LDT), and access rights information (CPL).
+- The linear address of the base of the GDT is contained in the GDT register (GDTR).
+- The linear address of the LDT is contained in the LDT register (LDTR).
+- GDTR (Global Descriptor Table Register) is a 48 bits register.
+- GDTR: upper 32bits holds the base address where the GDT is stored and the lower 16bits holds the table limit which tell the size of the table.
+- LDT is intended to used per process and switched when the kernel switch between process contexts. GDT is for use system wide.
+- The OS sets those tables.
+
+## Protected-Mode Memory Management
+- At the system-architecture level in protected mode, the processor uses two stages of address translation to arrive at a physical address: logical-address translation through `segmentation` and linear address space through `paging`.
+- Segmentation provides a mechanism for dividing adressable memory space into segments.
+- Segmentation translates logical addresses to linear addresses in hardware by using table lookups.
+- A logical address consists of a 16-bit segment selector and a 32-bit offset.
+- To translate a logical address into a linear address, the processor does the following:
+    1. Uses the offset in the segment selector to locate the segment descriptor for the segment in the GDT or LDT and reads it into the processor. (This step is needed only when a new segment selector is loaded into a segment register.)
+    2. Examines the segment descriptor to check the access rights and range of the segment to insure that the segment is accessible and that the offset is within the limits of the segment.
+    3. Adds the base address of the segment from the segment descriptor to the offset to form a linear address.
+![Imgur](https://i.imgur.com/jh5Bp46.png)
+
+
+- A segment selector is a 16-bit identifier for a segment. It does not point directly to the segment, but instead points to the segment descriptor that defines the segment.
+![Imgur](https://i.imgur.com/JUOiXYX.png)
+
+
+
+- A segment have a visible part (segment selector) which can be read or written to by software running at any privilege level, and a hidden part which act like a cache so that segment descriptor info doesn't have to be looked up each time (only accessible by the hardware).
