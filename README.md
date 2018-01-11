@@ -105,3 +105,34 @@ The VMCS data are organized into six logical groups:
 
 #### VMCS Layout:
 * The VMCS layout is available in a form of table here: [VMCS Layout.pdf](../master/pdf/VMCS.pdf)
+
+#### Instructions That Cause VM Exits Unconditionally
+* The following instructions cause VM exits when they are executed in VMX non-root operation: 
+	- CPUID, GETSEC, INVD, and XSETBV. 
+	- INVEPT, INVVPID, VMCALL, VMCLEAR, VMLAUNCH, VMPTRLD, VMPTRST, VMRESUME, VMXOFF, and VMXON.
+
+#### Instructions That Cause VM Exits Conditionally
+* Instructions cause VM exits in VMX non-root operation depending on the setting of the VM-execution controls.
+	- CLTS
+	- ENCLS
+	- HLT
+	- IN, INS/INSB/INSW/INSD, OUT, OUTS/OUTSB/OUTSW/OUTSD.
+	- INVLPG
+	- INVPCID
+	- LGDT, LIDT, LLDT, LTR, SGDT, SIDT, SLDT, STR
+	- LMSW
+	- MONITOR
+	- MOV from CR3/CR8, MOV to CR0/1/3/4/8
+	- MOV DR
+	- MWAIT
+	- PAUSE
+	- RDMSR, WRMSR
+	- RDPMC
+	- RDRAND, RDSEED
+	- RDTSC, RDTSCP
+	- RSM
+	- VMREAD, VMWRITE
+	- WBINVD
+	- XRSTORS, XSAVES
+
+
