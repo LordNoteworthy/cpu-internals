@@ -21,13 +21,15 @@ Any program or task running on an IA-32 processor is given a set of resources fo
 </p>
 
 ## IA-32 Memory Models:
-Programs do not directly address physical memory. Instead, they access memory using one of three memory models: flat, segmented, or real address mode:
-- Flat memory model: Memory appears to a program as a single, continuous address space  (Code, data, and stacks are all contained in this address space.) ->  adr from 0 to 2^32 - 1.
+Programs do not directly address physical memory. Instead, they access memory using one of three memory models: `flat`, `segmented`, or `real` address mode:
+- Flat memory model: Memory appears to a program as a single, continuous address space (`Code`, `data`, and `stacks` are all contained in this address space.) ->  adr from 0 to 2^32 - 1.
 - Segmented memory mode: Memory appears to a program as a group of independent address spaces called segments. Code, data, and stacks are typically contained in separate segments.
     - To address a byte in a segment, a program issues a logical address (far pointers) = segment selector + offset.
     - Programs running on an IA-32 processor can address up to 16,383 segments (2^14 - 1).
-    - For example, placing a program’s stack in a separate segment prevents the stack from growing into the code or data space and overwriting instructions or data, respectively .
-- Real-address mode memory mode: This is the memory model for the Intel 8086 processor.
+    - Internally, all the segments that are defined for a system are mapped into the processor’s linear address space. To access a memory location, the processor thus translates each logical address into a linear address. This translation is transparent to the application program.
+    - The primary reason for using segmented memory is to increase the reliability of programs and systems. For example, placing a program’s stack in a separate segment prevents the stack from growing into the code or data space and overwriting instructions or data, respectively.
+    
+- Real-address mode memory mode: this is the memory model for the Intel 8086 processor.
     - Linear address space for the program and the operating system/executive consists of an array of segments of up to 64 KBytes in size each.
     - The maximum size of the linear address space in real-address mode is 220 bytes.
 
@@ -45,9 +47,12 @@ Programs do not directly address physical memory. Instead, they access memory us
 
 
 ## Modes of Operation vs. Memory Model
-- 64-bit mode — Segmentation is generally (but not completely) disabled, creating a flat 64-bit linear-address space.
-- Specifically, the processor treats the segment base of CS, DS, ES, and SS as zero in 64-bit mode (this makes a linear address equal an effective address). 
-- Segmented and real address modes are not available in 64-bit mode.
+- When writing code for an IA-32 or Intel 64 processor, a programmer needs to know the operating mode the processor is going to be in when executing the code and the memory model being used.
+    - Protected mode: the processor can use any of the memory models.
+    - Real mode: the processor can only supports the real-address mode memory model.
+    - SMM mode: the processor switches to a separate address space, called the system management RAM (SMRAM). The memory model used to address bytes in this address space is similar to the real-address mode model.
+    - Compatibility mode: Software that needs to run in compatibility mode should observe the same memory model as those targeted to run in 32-bit protected mode. The effect of segmentation is the same as it is in - 32-bit protected mode semantics.
+    - 64-bit mode — Segmentation is generally (but not completely) disabled, creating a flat 64-bit linear-address space. Specifically, the processor treats the segment base of CS, DS, ES, and SS as zero in 64-bit mode (this makes a linear address equal an effective address). Segmented and real address modes are not available in 64-bit mode.
 
 ## General Purpose Registers:
 - EAX — Accumulator for operands and results data
@@ -59,8 +64,17 @@ Programs do not directly address physical memory. Instead, they access memory us
 - ESP — Stack pointer (in the SS segment)
 - EBP — Pointer to data on the stack (in the SS segment)
 
+## General-Purpose Registers in 64-Bit Mode
+- 16 general purpose registers and the default operand size is 32 bits.
+- If a 32-bit operand size is specified: EAX,EBX, ECX, EDX, EDI, ESI, EBP, ESP, R8D - R15D are available.
+- If a 64-bit operand size is specified: RAX, RBX, RCX, RDX, RDI, RSI, RBP, RSP, R8-R15 are available. R8D-R15D/R8-R15 represent eight new general-purpose registers.
+- All of these registers can be accessed at the byte, word, dword, and qword level. REX prefixes are used to generate 64-bit operand sizes or to reference registers R8-R15.
+- Registers only available in 64-bit mode (R8-R15 and XMM8-XMM15) are preserved across transitions from 64-bit mode into compatibility mode then back into 64-bit mode.
+- However, values of R8-R15 and XMM8-XMM15 are undefined after transitions from 64-bit mode through compatibility mode to legacy or real mode and then back through compatibility mode to 64-bit mode
+
 ## Segment Registers
 - The segment registers (CS, DS, SS, ES, FS, and GS) hold 16-bit segment selectors.
+- When writing user mode apps, programmers generally create segment selectors with assembler directives. If writing system code, programmers may need to create segment selectors directly. 
 - When using the flat (unsegmented) memory model, segment registers are loaded with segment selectors that point to overlapping segments, each of which begins at address 0 of the linear address space.
 - These overlapping segments then comprise the linear address space for the program. 
 - Typically, two overlapping segments are defined: one for code and another for data and stacks. The CS segment register points to the code segment and all the other segment registers point to the data and stack segment.

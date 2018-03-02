@@ -3,19 +3,20 @@
 
 <p align="center"> 
     <img src="https://i.imgur.com/O0QCFwt.png" width="700px" height="auto">
-</p
+</p>
 
 ## Global and Local Descriptor Tables
 - When operating in protected mode, all memory accesses pass through either the global descriptor table (GDT) or an optional local descriptor table (LDT).
 - These tables contain entries called segment descriptors.
 - Segment descriptors (8 byte large) provide the base address of segments well as access rights, type, and usage information.
 - Each segment descriptor has an associated segment selector.
-- A segment selector provides the software that uses it with an index into the GDT or LDT (the offset of its associated segment descriptor), a global/local flag (determines whether the selector points to the GDT or the LDT), and access rights information (CPL).
+- A segment selector (16-bits) provides the software that uses it with an index into the GDT or LDT (the offset of its associated segment descriptor), a global/local flag (determines whether the selector points to the GDT or the LDT), and access rights information (CPL).
 - The linear address of the base of the GDT is contained in the GDT register (GDTR).
 - The linear address of the LDT is contained in the LDT register (LDTR).
 - GDTR (Global Descriptor Table Register) is a 48 bits register.
 - GDTR: upper 32bits holds the base address where the GDT is stored and the lower 16bits holds the table limit which tell the size of the table.
 - LDT is intended to used per process and switched when the kernel switch between process contexts. GDT is for use system wide.
+- `LGDT`/`SGDT` and `LLDT`/`SLDT` are instructions which load/store data from the GDT/LDT register accordingly.
 - The OS sets those tables.
 
 ## Protected-Mode Memory Management
@@ -52,4 +53,12 @@
 - When a segment selector is loaded into the visible part of a segment register, the processor also loads the hidden part of the segment register with the base address, segment limit, and access control information from the segment descriptor pointed to by the segment selector. 
 - Two kinds of load instructions are provided for loading the segment registers:
     1. Direct load instructions such as the MOV, POP, LDS, LES, LSS, LGS, and LFS instructions. These instructions explicitly reference the segment registers.
-    2. Implied load instructions such as the far pointer versions of the CALL, JMP, and RET instructions, the SYSENTER and SYSEXIT instructions, and the IRET, INTn, INTO and INT3 instructions. 
+    2. Implied load instructions such as the far pointer versions of the CALL, JMP, and RET instructions, the SYSENTER and SYSEXIT instructions, and the IRET, INTn, INTO and INT3 instructions.
+
+When the S (descriptor type) flag in a segment descriptor is clear, the descriptor type is a system descriptor. The processor recognizes the following types of system descriptors:
+- Local descriptor-table (LDT) segment descriptor.
+- Task-state segment (TSS) descriptor.
+- Call-gate descriptor.
+- Interrupt-gate descriptor.
+- Trap-gate descriptor.
+- Task-gate descriptor.
