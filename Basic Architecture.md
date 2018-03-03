@@ -28,14 +28,13 @@ Programs do not directly address physical memory. Instead, they access memory us
     - Programs running on an IA-32 processor can address up to 16,383 segments (2^14 - 1).
     - Internally, all the segments that are defined for a system are mapped into the processor’s linear address space. To access a memory location, the processor thus translates each logical address into a linear address. This translation is transparent to the application program.
     - The primary reason for using segmented memory is to increase the reliability of programs and systems. For example, placing a program’s stack in a separate segment prevents the stack from growing into the code or data space and overwriting instructions or data, respectively.
-    
 - Real-address mode memory mode: this is the memory model for the Intel 8086 processor.
     - Linear address space for the program and the operating system/executive consists of an array of segments of up to 64 KBytes in size each.
     - The maximum size of the linear address space in real-address mode is 220 bytes.
 
  <p align="center"> 
     <img src="https://i.imgur.com/EfpFmVB.png" width="700px" height="auto">
-</p
+</p>
 
 ## Paging and Virtual Memory
 - When using direct mapping (paging disabled), each linear address has a one-to-one correspondence with a physical address.
