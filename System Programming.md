@@ -7,7 +7,7 @@
 
 ## Global and Local Descriptor Tables
 * When operating in protected mode, all memory accesses pass through either the global descriptor table (GDT) or an optional local descriptor table (LDT).
-* These tables contain entries called segment descriptors.
+* These tables contain entries called segment descriptors and can contain up to 8192 (213) 8-byte descriptors. 
 * Segment descriptors (8 byte large) provide the base address of segments well as access rights, type, and usage information.
 * Each segment descriptor has an associated segment selector.
 * A segment selector (16-bits) provides the software that uses it with an index into the GDT or LDT (the offset of its associated segment descriptor), a global/local flag (determines whether the selector points to the GDT or the LDT), and access rights information (CPL).
@@ -60,7 +60,7 @@
 
 <p align="center"> 
     <img src="https://i.imgur.com/yjnRlez.png" width="600px" height="auto">
-</p
+</p>
 
 ## System Descriptor Types
 * When the S (descriptor type) flag in a segment descriptor is clear, the descriptor type is a system descriptor. The processor recognizes the following types of system descriptors:
@@ -72,3 +72,16 @@
     - Task-gate descriptor.
 
 
+### Segment Descriptor Tables
+* Each system must have one GDT defined, which may be used for all programs and tasks in the system. Optionally, one or more LDTs can be defined. For example, an LDT can be defined for each separate task being run, or some or all tasks can share the same LDT.
+<p align="center"> 
+    <img src="https://i.imgur.com/qEnuApv.png" width="600px" height="auto">
+</p>
+
+* The base address of the GDT should be aligned on an eight-byte boundary to yield the best processor performance. 
+* The limit value for the GDT is expressed in bytes. 
+* As with segments, the limit value is added to the base address to get
+the address of the last valid byte. A limit value of 0 results in exactly one valid byte. Because segment descriptors
+are always 8 bytes long, the GDT limit should always be one less than an integral multiple of eight (that is, 8N – 1).
+* The first descriptor in the GDT is not used by the processor. A segment selector to this `null descriptor` does not generate an exception when loaded into a data-segment register (DS, ES, FS, or GS), but it always generates a #GP exception when an attempt is made to access memory using the descriptor.
+* The LDT is located in a system segment of the LDT type. The GDT must contain a segment descriptor for the LDT segment. If the system supports multiple LDTs, each must have a separate segment selector and segment descriptor in the GDT. The segment descriptor for an LDT can be located anywhere in the GDT. 
