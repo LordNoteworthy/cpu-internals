@@ -24,6 +24,20 @@
 * The architecture defines a set of special descriptors called gates: `call gates`, `interrupt gates`, `trap gates`, and `task gates`.
 * These gates provide protected gateways to system procedures and handlers that may operate at a different privilege level than application programs and most procedures.
 
+## Task-State Segments and Task Gates
+* The `TSS` defines the state of the execution environment for a task. It includes the state of: 
+    - General purpose registers, segment registers, the EFLAGS register, the EIP register.
+    - And segment selectors with stack pointers for three stack segments (one stack for each privilege level). 
+    - The TSS also includes the segment selector for the LDT associated with the task and the base address of the paging-structure hierarchy.
+* All program execution in protected mode happens within the context of a task called the `current task`.
+* In switching tasks, the processor performs the following actions:
+    1. Stores the state of the current task in the current TSS.
+    2. Loads the task register with the segment selector for the new task.
+    3. Accesses the new TSS through a segment descriptor in the GDT.
+    4. Loads the state of the new task from the new TSS into the general-purpose registers, the segment registers, the LDTR, control register CR3 (base address of the paging-structure hierarchy), the EFLAGS register, and the EIP register.
+    5. Begins execution of the new task.
+* A task can also be accessed through a task gate. A task gate is similar to a call gate, except that it provides access (through a segment selector) to a TSS rather than a code segment
+
 ## Protected-Mode Memory Management
 * At the system-architecture level in protected mode, the processor uses two stages of address translation to arrive at a physical address: logical-address translation through `segmentation` and linear address space through `paging`.
 <p align="center"> 
