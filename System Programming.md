@@ -38,6 +38,14 @@
     5. Begins execution of the new task.
 * A task can also be accessed through a task gate. A task gate is similar to a call gate, except that it provides access (through a segment selector) to a TSS rather than a code segment
 
+## System Registers
+* The `system flags` and `IOPL` field in the EFLAGS register control task and mode switching, interrupt handling, instruction tracing, and access rights.
+* The `control registers CR0, CR2, CR3, and CR4` contain a variety of flags and data fields for controlling system level operations.
+* The `debug registers` allow the setting of breakpoints for use in debugging programs and systems software. 
+* The `GDTR, LDTR`, and `IDTR` registers contain the linear addresses and sizes (limits) of their respective tables.
+* The `TR task register` contains the linear address and size of the TSS for the current task.
+* Model-specific registers.
+
 ## Protected-Mode Memory Management
 * At the system-architecture level in protected mode, the processor uses two stages of address translation to arrive at a physical address: logical-address translation through `segmentation` and linear address space through `paging`.
 <p align="center"> 
