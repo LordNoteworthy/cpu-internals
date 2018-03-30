@@ -11,13 +11,18 @@
 * Segment descriptors (8 byte large) provide the base address of segments well as access rights, type, and usage information.
 * Each segment descriptor has an associated segment selector.
 * A segment selector (16-bits) provides the software that uses it with an index into the GDT or LDT (the offset of its associated segment descriptor), a global/local flag (determines whether the selector points to the GDT or the LDT), and access rights information (CPL).
-* The linear address of the base of the GDT is contained in the GDT register (GDTR).
+* The linear address of the base of the GDT (as well as its length or limit) is contained in the GDT register (GDTR).
 * The linear address of the LDT is contained in the LDT register (LDTR).
 * GDTR (Global Descriptor Table Register) is a 48 bits register.
-* GDTR: upper 32bits holds the base address where the GDT is stored and the lower 16bits holds the table limit which tell the size of the table.
+* GDTR: `upper 32bits` holds the base address where the GDT is stored and the `lower 16bits` holds the table limit which tell the size of the table.
 * LDT is intended to used per process and switched when the kernel switch between process contexts. GDT is for use system wide.
 * `LGDT`/`SGDT` and `LLDT`/`SLDT` are instructions which load/store data from the GDT/LDT register accordingly.
 * The OS sets those tables.
+
+## System Segments, Segment Descriptors, and Gates
+* The architecture defines two system segments: the task-state segment (TSS) and the LDT.
+* The architecture defines a set of special descriptors called gates: `call gates`, `interrupt gates`, `trap gates`, and `task gates`.
+* These gates provide protected gateways to system procedures and handlers that may operate at a different privilege level than application programs and most procedures.
 
 ## Protected-Mode Memory Management
 * At the system-architecture level in protected mode, the processor uses two stages of address translation to arrive at a physical address: logical-address translation through `segmentation` and linear address space through `paging`.
@@ -84,4 +89,5 @@
 the address of the last valid byte. A limit value of 0 results in exactly one valid byte. Because segment descriptors
 are always 8 bytes long, the GDT limit should always be one less than an integral multiple of eight (that is, 8N – 1).
 * The first descriptor in the GDT is not used by the processor. A segment selector to this `null descriptor` does not generate an exception when loaded into a data-segment register (DS, ES, FS, or GS), but it always generates a #GP exception when an attempt is made to access memory using the descriptor.
-* The LDT is located in a system segment of the LDT type. The GDT must contain a segment descriptor for the LDT segment. If the system supports multiple LDTs, each must have a separate segment selector and segment descriptor in the GDT. The segment descriptor for an LDT can be located anywhere in the GDT. 
+* The LDT is located in a system segment of the LDT type. The GDT must contain a segment descriptor for the LDT segment. If the system supports multiple LDTs, each must have a separate segment selector and segment descriptor in the GDT. The segment descriptor for an LDT can be located anywhere in the GDT.
+* An LDT is accessed with its segment selector. To eliminate address translations when accessing the LDT, the segment selector, base linear address, limit, and access rights of the LDT are stored in the LDTR register
