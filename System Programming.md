@@ -99,7 +99,7 @@
     - Task-gate descriptor.
 
 
-### Segment Descriptor Tables
+## Segment Descriptor Tables
 * Each system must have one GDT defined, which may be used for all programs and tasks in the system. Optionally, one or more LDTs can be defined. For example, an LDT can be defined for each separate task being run, or some or all tasks can share the same LDT.
 <p align="center"> 
     <img src="https://i.imgur.com/qEnuApv.png" width="600px" height="auto">
