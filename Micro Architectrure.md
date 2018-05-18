@@ -14,3 +14,14 @@
 * In *Progammed I/O* (PIO), the CPU manually check if there are any I/O requests available periodically `polling`. If there isn't, it keeps executing its normal workflow. If there is, it handles the IO request instead.
 * in *Interrupt-Driven I/O*, the CPU doesn't need to manually check for IO requests. When there is an I/O request available, the CPU is immediately notified using `interrupts`, and the request is immediately handled using a interrupt service routines. The use of DMA allows interrupt-driven IO to be used. Otherwise, a system must use programmed I/O if DMA is not available.
 * *Direct Memory Access* (DMA) is a method allowing devices (typically has very slow I/O speeds) to access main memory without needing the CPU to explicitly handle the requests. When the CPU initiates data transfer from IO devices to main memory, the CPU instructs the DMA controller to handle this task. The CPU will then "forget" about this operation, and proceed with other tasks. When the DMA controller has completed the transfer, it will signal the CPU using an interrupt. The CPU will then "conclude" the task needed associated with the data transfer it initiated.
+
+## Video RAM
+__Video RAM__ (VRAM) is a dual-ported variant of dynamic RAM (DRAM), which was once commonly used to store the [framebuffer](https://en.wikipedia.org/wiki/Framebuffer) in graphics adapters. System RAM is great for loading and running programs, but when you need graphics power, VRAM is where it's at. This is the memory used to store image data that the computer displays; it acts as a buffer between the CPU and the video card. When a picture is to be displayed on the screen, the image is first read by the processor and then written to the VRAM. 
+
+ <p align="center"> 
+    <img src="https://i.imgur.com/waiV3E0.png" width="600px" height="auto">
+</p
+
+
+
+
