@@ -17,9 +17,9 @@
 
 ## Video RAM
 __Video RAM (VRAM)__ is a dual-ported variant of dynamic RAM (DRAM), which was once commonly used to store the [framebuffer](https://en.wikipedia.org/wiki/Framebuffer) in graphics adapters. System RAM is great for loading and running programs, but when you need graphics power, VRAM is where it's at. This is the memory used to store image data that the computer displays; it acts as a buffer between the CPU and the video card. When a picture is to be displayed on the screen, the image is first read by the processor and then written to the VRAM. 
- <p align="center"> 
+<p align="center"> 
     <img src="https://i.imgur.com/waiV3E0.png" width="600px" height="auto">
-</p
+</p>
 
 ## PIC vs APIC
 * __Programmable interrupt controller (PIC)__ one of the most important chips making up the x86 architecture, its role is to manage hardware interrupts and send them to the appropriate system interrupt. This allows the system to respond to devices needs without loss of time (from polling the device, for instance).
@@ -30,3 +30,10 @@ __Video RAM (VRAM)__ is a dual-ported variant of dynamic RAM (DRAM), which was o
 * APIC enables the construction of multiprocessor systems, It is one of several architectural designs intended to solve interrupt routing efficiency issues in multiprocessor computer systems.
 * The [APIC](https://wiki.osdev.org/APIC) is a split architecture design, with a local component (LAPIC) usually integrated into the processor itself, and an optional I/O APIC on a system bus.
 * The `CPUID.01h:EDX[bit 9]` flag specifies whether a CPU has a built-in local APIC.
+
+## IOMMU
+* __Input–output memory management unit (IOMMU)__ is a memory management unit (MMU) that connects a DMA-capable I/O bus to the main memory.
+* Like a traditional MMU, which translates CPU-visible virtual addresses to physical addresses, the IOMMU maps device-visible virtual addresses (also called device addresses or I/O addresses in this context) to physical addresses.
+<p align="center"> 
+    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d6/MMU_and_IOMMU.svg" width="400px" height="auto">
+</p>
