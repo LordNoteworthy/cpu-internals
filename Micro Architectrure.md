@@ -33,7 +33,7 @@ __Video RAM (VRAM)__ is a dual-ported variant of dynamic RAM (DRAM), which was o
 
 ## IOMMU
 * __Input–output memory management unit (IOMMU)__ is a memory management unit (MMU) that connects a DMA-capable I/O bus to the main memory.
-* Like a traditional MMU, which translates CPU-visible virtual addresses to physical addresses, the IOMMU maps device-visible virtual addresses (also called device addresses or I/O addresses in this context) to physical addresses.
-<p align="center"> 
-    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d6/MMU_and_IOMMU.svg" width="400px" height="auto">
+* Like a traditional MMU, which translates CPU-visible virtual addresses to physical addresses, the IOMMU maps device-visible virtual addresses (also called device addresses or I/O addresses in this context) to physical addresses. 
+* IOMMU allows guest VMs to directly use peripheral devices, such as Ethernet, accelerated graphics cards, and hard-drive controllers, through DMA and __interrupt remapping__. This is sometimes called __PCI passthrough__.
+<p align="center"> <img src="https://upload.wikimedia.org/wikipedia/commons/d/d6/MMU_and_IOMMU.svg" width="400px" height="auto">
 </p>
