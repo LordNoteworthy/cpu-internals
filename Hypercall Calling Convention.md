@@ -19,7 +19,7 @@
     - R8 - Input Parameter
     - XMM0-XMM5 - Input Parameters (XMM Fast Hypercall if uses more than two input parameters)
 * *Hypercall Input Value includes call code, fast hypercall bit, variable header size, rep count & start index.
-
+* Hyper-V uses GPA when sending arguments with hypercalls. Smarter than what Xen are doing.
 
 ### KVM Hypercall Interface in x86 64-bit mode
 * KVM Hypercalls have a three-byte sequence of either the vmcall or the vmmcall instruction.
