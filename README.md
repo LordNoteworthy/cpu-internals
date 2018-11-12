@@ -112,6 +112,18 @@ The VMCS data are organized into six logical groups:
 	- An ordinary VMCS can be used for VM entry but a shadow VMCS cannot. Attempts to perform VM entry when the current VMCS is a shadow VMCS fail.
 	- The VMREAD and VMWRITE instructions can be used in VMX non-root operation to access a shadow VMCS but not an ordinary VMCS.
 
+### Software Use of Virtual-Machine Control Structures
+* To ensure proper processor behavior, software should observe certain guidelines when using an active VMCS:
+	- No VMCS should ever be active on more than one logical processor
+	- Software should not modify the shadow-VMCS indicator (see Table 24-1) in the VMCS region of a VMCS that is active. 
+	- Software should use the VMREAD and VMWRITE instructions to access the different fields in the current VMCS.
+
+### VMREAD, VMWRITE, and Encodings of VMCS Fields
+* Every field of the VMCS is associated with a 32-bit value that is its __encoding__. The encoding is provided in an operand to VMREAD and VMWRITE when software wishes to read or write that field.
+* The structure of the 32-bit encodings of the VMCS components is determined principally by the width of the fields and their function in the VMCS.
+<p align="center"><img src="https://i.imgur.com/Ve19xHd.png"  width="600px" height="auto"></p>
+
+
 #### Instructions That Cause VM Exits Unconditionally
 * The following instructions cause VM exits when they are executed in VMX non-root operation: 
 	- CPUID, GETSEC, INVD, and XSETBV. 
