@@ -98,7 +98,6 @@
     - Trap-gate descriptor.
     - Task-gate descriptor.
 
-
 ## Segment Descriptor Tables
 * Each system must have one GDT defined, which may be used for all programs and tasks in the system. Optionally, one or more LDTs can be defined. For example, an LDT can be defined for each separate task being run, or some or all tasks can share the same LDT.
 <p align="center"> 
@@ -113,3 +112,15 @@ are always 8 bytes long, the GDT limit should always be one less than an integra
 * The first descriptor in the GDT is not used by the processor. A segment selector to this `null descriptor` does not generate an exception when loaded into a data-segment register (DS, ES, FS, or GS), but it always generates a #GP exception when an attempt is made to access memory using the descriptor.
 * The LDT is located in a system segment of the LDT type. The GDT must contain a segment descriptor for the LDT segment. If the system supports multiple LDTs, each must have a separate segment selector and segment descriptor in the GDT. The segment descriptor for an LDT can be located anywhere in the GDT.
 * An LDT is accessed with its segment selector. To eliminate address translations when accessing the LDT, the segment selector, base linear address, limit, and access rights of the LDT are stored in the LDTR register
+
+### Interrupt And Exception Overview
+* __Interrupts__ and __exceptions__ are events that indicate that a condition exists somewhere in the system, the processor, or within the currently executing program or task that requires the attention of a processor.
+* They typically result in a forced transfer of execution from the currently running program or task to a special software routine or task called an __interrupt handler__ or an __exception handler__.
+* Interrupts occur at random times during the execution of a program, in response to signals from hardware. System hardware uses interrupts to handle events external to the processor, such as requests to service peripheral devices. Software can also generate interrupts by executing the INT n instruction.
+* Exceptions occur when the processor detects an error condition while executing an instruction, such as division by zero. The processor detects a variety of error conditions including protection violations, page faults, and internal machine faults.
+
+### Exceptions Classifications
+* Exceptions are classified as __faults, traps, or aborts__ depending on the way they are reported and whether the instruction that caused the exception can be restarted without loss of program or task continuity:
+    - Faults: A fault is an exception that can generally be corrected and that, once corrected, allows the program to be restarted with no loss of continuity. When a fault is reported, the processor restores the machine state to the state prior to the beginning of execution of the faulting instruction. The return address (saved contents of the CS and EIP registers) for the fault handler points to the faulting instruction, rather than to the instruction following the faulting instruction.
+    - Traps: A trap is an exception that is reported immediately following the execution of the trapping instruction. Traps allow execution of a program or task to be continued without loss of program continuity. The return address for the trap handler points to the instruction to be executed after the trapping instruction.
+    - Aborts: An abort is an exception that does not always report the precise location of the instruction causing the exception and does not allow a restart of the program or task that caused the exception. Aborts are used to report severe errors, such as hardware errors and inconsistent or illegal values in system tables.
