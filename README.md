@@ -123,6 +123,20 @@ The VMCS data are organized into six logical groups:
 * The structure of the 32-bit encodings of the VMCS components is determined principally by the width of the fields and their function in the VMCS.
 <p align="center"><img src="https://i.imgur.com/Ve19xHd.png"  width="600px" height="auto"></p>
 
+###  Initializing a VMCS
+* Software should initialize fields in a VMCS (using VMWRITE) before using the VMCS for VM entry.
+* A processor maintains some VMCS information that cannot be modified with the VMWRITE instruction; this includes a VMCS’s launch state. Such information may be stored in the VMCS data portion of a VMCS region. Because the format of this information is __implementation-specific__, there is no way for software to know, when it first allocates a region of memory for use as a VMCS region, how the processor will determine this information from the contents of the memory region.
+* VMCLEAR should be executed for a VMCS before it is used for VM entry for the first time.
+* VMLAUNCH should be used for the first VM entry using a VMCS after VMCLEAR has been executed for that VMCS.
+* VMRESUME should be used for any subsequent VM entry using a VMCS (until the next execution of VMCLEAR for the VMCS)
+
+### VMXON Region
+* The amount of memory required for the VMXON region is the same as that required for a VMCS region. This size is implementation specific and can be determined by consulting the VMX capability __MSR IA32_VMX_BASIC__.
+* Software can determine a processor’s physical-address width by executing CPUID with __80000008H__ in EAX. The physical-address width is returned in bits 7:0 of EAX.
+* If IA32_VMX_BASIC[48] is read as 1, the VMXON pointer must not set any bits in the range 63:32.
+* Before executing VMXON, software should write the __VMCS revision identifier__ to the VMXON region. (Specifically, it should write the 31-bit VMCS revision identifier to bits 30:0 of the first 4 bytes of the VMXON region; bit 31 should be cleared to 0.) => ```__readmsr(MSR_IA32_VMX_BASIC~0x480);```
+* Software should use a separate region for each logical processor and should not access or modify the VMXON region of a logical processor between execution of VMXON and VMXOFF on that logical processor. Doing otherwise may lead to unpredictable behavior.
+
 
 #### Instructions That Cause VM Exits Unconditionally
 * The following instructions cause VM exits when they are executed in VMX non-root operation: 
