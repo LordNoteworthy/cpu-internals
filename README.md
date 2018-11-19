@@ -18,9 +18,7 @@
 	- VM exits transfer control to an entry point specified by the VMM. The VMM can take action appropriate to the cause of the VM exit and can then return to the VM using a VM entry.
 	- Eventually, the VMM may decide to shut itself down and leave VMX operation. It does so by executing the VMXOFF instruction.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/LordNoteworthy/cpu-internals/master/figures/Interaction%20of%20a%20Virtual-Machine%20Monitor%20and%20Guests.png" alt="VMX transition"/>
-</p>
+<p align="center"><img src="https://i.imgur.com/Vpvq9Gi.png"  width="400px" height="auto"></p>
 
 ### Virtual-machine Control Structure
 * VMCS is a data structure which control the behavior of processor in VMX non-root mode and control VMX transitions.
@@ -70,9 +68,8 @@
 * Executing a VMLAUNCH instruction requires a VMCS whose launch state is “clear” and makes the launch state "launched".
 * Executing a VMRESUME instruction requires a VMCS whose launch state is “launched”.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/LordNoteworthy/cpu-internals/master/figures/States%20of%20VMCS%20X.png" alt="States of VMCS X"/>
-</p>
+<p align="center"><img src="https://i.imgur.com/RFdaRU8.png"  width="500px" height="auto"></p>
+
 
 ### Format Of The VMCS Region:
 * A VMCS region comprises up tp 4KB. To determine the exact size of the VMCS region, check VMX capability MSR IA32_VMX_BASIC.
@@ -137,7 +134,6 @@ The VMCS data are organized into six logical groups:
 * Before executing VMXON, software should write the __VMCS revision identifier__ to the VMXON region. (Specifically, it should write the 31-bit VMCS revision identifier to bits 30:0 of the first 4 bytes of the VMXON region; bit 31 should be cleared to 0.) => ```__readmsr(MSR_IA32_VMX_BASIC~0x480);```
 * Software should use a separate region for each logical processor and should not access or modify the VMXON region of a logical processor between execution of VMXON and VMXOFF on that logical processor. Doing otherwise may lead to unpredictable behavior.
 
-
 #### Instructions That Cause VM Exits Unconditionally
 * The following instructions cause VM exits when they are executed in VMX non-root operation: 
 	- CPUID, GETSEC, INVD, and XSETBV. 
@@ -166,5 +162,3 @@ The VMCS data are organized into six logical groups:
 	- VMREAD, VMWRITE
 	- WBINVD
 	- XRSTORS, XSAVES
-
-
