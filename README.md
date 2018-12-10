@@ -133,6 +133,9 @@ The VMCS data are organized into six logical groups:
 * If IA32_VMX_BASIC[48] is read as 1, the VMXON pointer must not set any bits in the range 63:32.
 * Before executing VMXON, software should write the __VMCS revision identifier__ to the VMXON region. (Specifically, it should write the 31-bit VMCS revision identifier to bits 30:0 of the first 4 bytes of the VMXON region; bit 31 should be cleared to 0.) => ```__readmsr(MSR_IA32_VMX_BASIC~0x480);```
 * Software should use a separate region for each logical processor and should not access or modify the VMXON region of a logical processor between execution of VMXON and VMXOFF on that logical processor. Doing otherwise may lead to unpredictable behavior.
+* The VMXON region should be zeroed prior to executing vmxon.
+<p align="center"><img src="https://i.imgur.com/fyqHlHu.png"  width="600px" height="auto"></p>
+
 
 #### Instructions That Cause VM Exits Unconditionally
 * The following instructions cause VM exits when they are executed in VMX non-root operation: 
