@@ -46,7 +46,15 @@ Some notes I wrote down while reading [7 Days to Virtualization: A Series on Hyp
   - a pointer to the VMM stack (or host stack)
   - a table of vCPU contexts
   - and a processor count.
-- Each virtual processor has their own set of items listed above and below.
+- Unique objects to any given virtual CPU:
+  - It’s own set of control registers.
+  - It’s own set of debug registers.
+  - It’s own set of model specific registers.
+  - It’s own set of special registers (GDTR, LDTR, IDTR)
+  - It’s own status register (RFLAGS)
+  - It’s own general purpose registers (RAX-R15)
+  - It’s own segment information
+- Each virtual processor has their own set of items (required for VMX operation):
   - A processor context (vCPU context; container for important structures for VMX operation)
   - A VMXON region
   - A VMCS region
@@ -56,13 +64,43 @@ Some notes I wrote down while reading [7 Days to Virtualization: A Series on Hyp
   - IA32_VMX_CR0_FIXED1
   - IA32_VMX_CR4_FIXED0
   - IA32_VMX_CR4_FIXED1
-  - Enabling VMX Operation in CR4
-  - Enable the use of VMXON in general operations (inside and outside SMX) - IA32_FEATURE_CONTROL
+  - Enabling VMX Operation in CR4 (`cr4.vmx_enable`)
+  - Set `feature_msr.vmxon_outside_smx` and `feature_msr.lock` bits in `IA32_FEATURE_CONTROL` msr if `feature_msr.bits.lock==0`.
 - Entering VMX Operation:
   - Check if VMX operation is supported by the processor.
   - Allocate system and processor specific structures.
+    - VMM context in the non-paged pool, as well as our vCPU table and stack.
   - Adjust CR4 and CR0 to supported values.
   - Enable VMX operation on each processor.
   - Set feature control bits to allows use of vmxon.
   - Execute vmxon, and enter VMX operation.
   - Remember when I mentioned you’ll want to check flags for success of certain instructions? This is one of those instructions. If it fails, the CF (carry flag) in RFLAGS is set. We’ll write a custom intrinsic to perform this check.
+
+### Day 3: The VMCS, Component Encoding, and Multiprocessor Initialization
+
+- The VMX instructions abstract access to the virtualization state so that implementation specific data isn’t at risk of being incorrectly modified.
+- It’s also another reason Intel performs component encoding (explained in the next subsection), that way all indexes into the VMCS start at a specific offset and can be consistent across implementations.
+- **vmxread|vmxwrite**: If executed in non-root operation it will read/write from the VMCS referenced in the VMCS link pointer field in the current VMCS. If the link pointer is invalid, it will trap into the hypervisor and execute the proper exit handler for this instruction.
+- This macro properly generates the 32-bit encoding value for VMCS components, and now we can begin encoding our individual VMCS components. You could go to an existing project like KVM and copy out the definitions with the proper encoding value already defined, however, I believe that’s a poor idea given that on any given processor the values are subject to change. We want to be able to find and generate these encodings with ease and flexibility should new fields be introduced.
+- The fourth control field in the table is the Guest/Host Mask and Read Shadows for CR0, and CR4. These fields control execution of instructions that access those registers. In general, special VMCS control-components allow your VMM to modify values read from CR0 and CR4. If the bits in the guest/host mask are set to 1 then they are owned by the host which means if the guest attempts to set them to values different from the bits in the read shadow for the respective control register then a VM exit will occur. Any guest that reads the values for these bits through use of typical instructions will read values from the read shadow for the respective control register. If bits are cleared to 0 in the guest/host mask then they are owned by the guest, meaning that any attempt by the guest to modify or read them succeeds and returns the bits from the respective control register.
+- IPI:
+  - The ability to use inter-processor interrupts is available because of support from the programming interrupt controllers (Intel’s APIC/x2APIC.) An example of their use is at boot, all interrupts are delivered to an arbitrarily selected processor core – this core is then referred to as the **bootstrap processor (BSP)**. The selection of the bootstrap processor is done by system hardware, and all other processors / cores are designated as application processors (AP).
+  - It’s important to understand this facility provided by the APIC/x2APIC. However, we won’t be using it for our method of initialization. This is the primary method of initialization for type-1 hypervisors, and can be used by type-2 hypervisors. The best solution on a type-2 hypervisor is to use the operating system facilities provided to initialize the VMM binary on all processors sequentially. Using an IPI either through the use of KeIpiGenericCall, or writing our own subroutine, limits what we can do inside of the IPI callback (the function that executes when the IPI is received) because the IRQL of the callback is raised to IPI_LEVEL (29). Very few operating system facilities can be used at this level, and we’re trying to make this project as simple as possible.
+- Affinity Masks:
+  - Processor affinity refers to the binding of a thread to a specific processing unit so that the thread will run on the designated processor. 
+- Deferred Procedure Calls
+  - Most commonly known for the usage in ISR servicing.
+  - To queue a DPC for the current processor we would call KeInsertQueueDpc following the construction of our own DPC object. 
+  - It is possible to select a processor that a DPC object will be executed on using KeSetTargetProcessorDpc.
+- We need to do the following per processor (as per the specification as well):
+  - Use cpuid on each virtual processor to determine if VMX is supported.
+  - Check VMCS and VMXON revision identifiers for each virtual processor.
+  - Check the VMX capability MSR’s of each virtual processor for value restrictions (allowed 0, or 1 bits).
+  - Allocate and initialize VMXON and VMCS regions on each virtual processor.
+  - Adjust CR0 and CR4 to support all fixed bits reported in the fixed MSR’s.
+  - Enable VMX operation on each virtual processor.
+  - Validate that the IA32_FEATURE_CONTROL MSR has been properly programmed and the lock bit set.
+  - Execute VMXON for each virtual processor.
+  - Error handling.
+- We don’t want to exit on any MSR accesses for this project, so we need to allocate an MSR bitmap (recall it is 4-KByte in size) and zero it out so that all bits in the bitmap are 0.
+- Lucky for us, the Microsoft specific __vmx_on intrinsic used in our project does all the error checking for us. The particular check of interest is to see if RFLAGS.CF was 0, if is was set that would indicate that vmxon failed and without the Microsoft specific intrinsic we’d be left doing all the checks ourselves
