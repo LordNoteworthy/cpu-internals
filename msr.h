@@ -68,4 +68,8 @@ typedef enum _MSR
     MSR_KERNEL_GS_BASE = 0xC0000102,
     MSR_TSC_AUX = 0xC0000103,
 
+
+    MSR_VM_CR = 0xC0010114,
+
+
 } MSR;

@@ -64,4 +64,5 @@ These are somes notes I made while reading [SimpleVisor](https://github.com/ione
         - Simply issue the XSETBV instruction on the native logical processor. 
       - Handles EXIT_REASON_VMXON
         -  Set the CF flag, which is how VMX instructions indicate failure 
-    -  Move the instruction pointer to the next instruction after the one that caused the exit. Since we are not doing any special handling or changing of execution, this can be done for any exit reason.  
+  - Move the instruction pointer to the next instruction after the one that caused the exit. Since we are not doing any special handling or changing of execution, this can be done for any exit reason.
+	- 
