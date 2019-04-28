@@ -1,3 +1,18 @@
+### System Bus
+
+- A system bus is a single computer bus that connects the major components of a computer system, combining the functions of a data bus to carry information, an address bus to determine where it should be sent, and a control bus to determine its operation.
+- The technique was developed to reduce costs and improve modularity, and although popular in the 1970s and 1980s, more modern computers use a variety of separate buses adapted to more specific needs.
+
+<p align="center"> 
+    <img src="https://i.imgur.com/XoCAfrl.png" width="400px" height="auto">
+</p>
+
+### Serial Bus
+
+- Many communication systems were generally designed to connect two integrated circuits on the same printed circuit board, connected by signal traces on that board (rather than external cables).
+- Integrated circuits are more expensive when they have more pins. To reduce the number of pins in a package, many ICs use a serial bus to transfer data when speed is not important. Some examples of such low-cost serial buses include RS-232, SPI, I²C, DC-BUS, UNI/O, 1-Wire and PCI Express.
+
+
 ### Memory-mapped IO vs Port-mapped IO
 
 - If the device is accessible in a dedicated address space, separate from the address space or memory, then the type of IO is called **port-mapped IO** or **isolated IO (PMIO)**.
