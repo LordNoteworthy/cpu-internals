@@ -49,3 +49,19 @@ These are somes notes I made while reading [HyperPlatform](https://github.com/ta
         - UtilVmRead(VmcsField::kGuestRip)
         - UtilVmRead(VmcsField::kGuestRsp)
         - guest_cr8, guest_irql, stack
+    - Exception or NMI: 
+        - Read kVmExitIntrInfo
+            - If hardware exception:
+                - If vector is #PF, inject interrupt (type, vector) and AsmWriteCR2(fault_address);
+                - If vector is #GP, read VmExitIntrErrorCode, inject interrupt (type, vector, error_code)
+                - else Bugcheck
+            - Else If software exception:
+                - If vector is #, vmread/write instr len.
+                - else BugCheck
+            - Else: BugCheck
+    - External Interrupts: Skip.
+    - Triple Fault: VmmpDumpGuestState + HYPERPLATFORM_COMMON_BUG_CHECK
+    - Hlt: Skip.
+    - Init signal: Skip
+    - Pending interrupt: Skip
+    - Invd: execute __invd and advance rip.

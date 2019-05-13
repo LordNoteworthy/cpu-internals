@@ -609,7 +609,7 @@ requiring special handling by the processor is assigned a unique identification 
 - The allowable range for vector numbers is **0 to 255**. Vector numbers in the range **0 through 31** are reserved by the Intel 64 and IA-32 architectures for architecture-defined exceptions and interrupts.
 - Vector numbers in the range **32 to 255** are designated as user-defined interrupts and are not reserved by the Intel 64 and IA-32 architecture. These interrupts are generally assigned to **external I/O devices** to enable those devices to send interrupts to the processor through one of the external hardware interrupt mechanisms .
 
-<p align="center"> <img src="https://i.imgur.com/lSdAuQl.png" width="500px" height="auto"></p>
+<p align="center"> <img src="https://i.imgur.com/lSdAuQl.png" width="600px" height="auto"></p>
 
 ## Sources of Interrupts
 
