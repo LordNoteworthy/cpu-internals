@@ -666,6 +666,20 @@ returns an error code.
   - Traps: A trap is an exception that is reported immediately following the execution of the trapping instruction. Traps allow execution of a program or task to be continued without loss of program continuity. The return address for the trap handler points to the instruction to be executed after the trapping instruction.
   - Aborts: An abort is an exception that does not always report the precise location of the instruction causing the exception and does not allow a restart of the program or task that caused the exception. Aborts are used to report severe errors, such as hardware errors and inconsistent or illegal values in system tables.
 
+# Chapter 11 Memory Cache Control
+
+## Methods Of Caching Available
+
+<p align="center"><img src="https://i.imgur.com/gVtPKG5.png"  width="400px" height="auto"></p>
+
+## Page Attribute Table (PAT)
+
+- The **Page Attribute Table (PAT)** extends the IA-32 architecture’s page-table format to allow memory types to be
+assigned to regions of physical memory based on linear address mappings.
+- The PAT is a companion feature to the MTRRs; that is:
+  - MTRRs allow mapping of memory types to regions of the physical address space, 
+  - where the PAT allows mapping of memory types to pages within the linear address space. 
+
 # Chapter 22 Architecture Compatibility
 
 ### Model-Specific Registers
