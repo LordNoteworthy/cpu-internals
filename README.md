@@ -148,6 +148,18 @@
 - This creates a flat address space for code, data, and stack. FS and GS are exceptions.
 - Limit checks for CS, DS, ES, SS, FS, and GS are disabled in 64-bit mode.
 
+# Chapter 6 Safer Mode Extensions Reference
+
+## Overview
+
+- Provide a programming interface for system software to establish a measured environment within the platform to support trust decisions by end users.
+- The measurement and protection mechanisms used by a measured environment are supported by the capabilities of an Intel TXT.
+
+## SMX functionality
+
+- SMX functionality is provided in an Intel 64 processor through the **GETSEC** instruction via leaf functions.
+- Software can detect support for SMX operation using the ```CPUID.01H.ECX[Bit 6] == 1```
+
 # Chapter 2 System Architecture Overview
 
 ## OVERVIEW OF THE SYSTEM-LEVEL ARCHITECTURE
@@ -668,9 +680,13 @@ returns an error code.
 
 # Chapter 11 Memory Cache Control
 
+## Internal caches, TLBs, and buffers
+
+
+
 ## Methods Of Caching Available
 
-<p align="center"><img src="https://i.imgur.com/gVtPKG5.png"  width="400px" height="auto"></p>
+<p align="center"><img src="https://i.imgur.com/gVtPKG5.png"  width="700px" height="auto"></p>
 
 ## Page Attribute Table (PAT)
 
@@ -735,8 +751,11 @@ assigned to regions of physical memory based on linear address mappings.
 - Before system software can enter VMX operation, it enables VMX by setting **CR4.VMXE[bit 13] = 1**.
 - VMXON causes an invalid-opcode exception (#UD) if executed with CR4.VMXE = 0.
 - Once in VMX operation, it is not possible to clear CR4.VMXE. CR4.VMXE can be cleared outside of VMX operation after executing of VMXOFF.
-- VMXON is also controlled by the IA32_FEATURE_CONTROL MSR (MSR address 3AH). The relevant bits of the MSR are: - Bit 0 is the lock bit: If this bit is 0, VMXON causes a #GP exception. If the lock bit is 1, WRMSR to this MSR causes a #GP exception. - Bit 1 enables VMXON in SMX operation: If this bit is 0, execution of VMXON in SMX operation causes a #GP exception. - Bit 2 enables VMXON outside SMX operation. If this bit is 0, execution of VMXON outside SMX operation causes a #GP exception.
-- To enable VMX support in a platform, BIOS must set bit 1, bit 2, or both , as well as the lock bit.
+- VMXON is also controlled by the IA32_FEATURE_CONTROL MSR (MSR address 3AH). The relevant bits of the MSR are:
+  - Bit 0 is the lock bit: If this bit is 0, VMXON causes a #GP exception. If the lock bit is 1, WRMSR to this MSR causes a #GP exception.
+  - Bit 1 enables VMXON in SMX operation: If this bit is 0, execution of VMXON in SMX operation causes a #GP exception.
+  - Bit 2 enables VMXON outside SMX operation. If this bit is 0, execution of VMXON outside SMX operation causes a #GP exception.
+- To enable VMX support in a platform, **BIOS must set bit 1, bit 2, or both , as well as the lock bit**.
 - Before executing VMXON, software should allocate a naturally aligned **4-KByte** region of memory that a LP may use to support VMX operation. This region is called the **VMXON region**. The address of the VMXON region (the VMXON pointer) is provided in an operand to VMXON.
 
 ## Restrictions On VMX Operation
