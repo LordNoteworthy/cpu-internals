@@ -1,16 +1,19 @@
-*These notes are taken from Intel SDM. You can consider them as a short/resumed version of some parts of the manuals that I found worth understanding when doing low level programming, os internals or virtualization.*
+# CPU Internals
+> These notes are taken from Intel SDM. You can consider them as a short/resumed version of some parts of the manuals that I found worth looking at when learning about system programming, OS internals or virtualization.
 
+### Contents
 - [Volume 1 Basic Architecture](#volume-1-basic-architecture)
     - [Chapter 3 Basic Execution Environment](##chapter-3-basic-execution-environment)
     - [Chapter 6 Procedure Calls, Interrupts, and Exceptions](##chapter-6-procedure-calls-interrupts-and-exceptions)
-- [Volume 2 Instruction Set Reference](#volume-2-instruction-set-reference)
-    - [Chapter 6 Safer Mode Extensions Reference](##chapter-6-safer-mode-extensions-reference)
+- [Volume 2 Instruction Set Reference](volume-2-instruction-set-reference)
+    - [Chapter 6 Safer Mode Extensions Reference](###chapter-6-safer-mode-extensions-reference)
 - [Volume 3 System Programming Guide](##volume-3-system-programming-guide)
     - [Chapter 2 System Architecture Overview](##chapter-2-system-architecture-overview)
     - [Chapter 3 Protected Mode Memory Management](##chapter-3-protected-memory-mode-management)
     - [Chapter 4 Paging](##chapter-4-paging)
     - [Chapter 6 Interrupt and Exception Handling](##chapter-6-interrupt-and-exception-handling)
     - [Chapter 11 Memory Cache Control](##chapter-11-memory-cache-control)
+    - [Chapter 17 Debug, Branch Profile, TSC, and Intel® Resource Director Technology (Intel® RDT) Features](##Debug)
     - [Chapter 22 Architecture Compatibility](##chapter-22-architecture-compatibility)
     - [Chapter 23 Introduction To Virtual Machine Extensions](##chapter-23-introduction-to-virtual-machine-extensions)
     - [Chapter 24 Virtual Machine Control Structures](##chapter-24-virtual-machine-control-structures)
@@ -18,11 +21,11 @@
     - [Chapter 28 VMX Support For Address Translation](##chapter-28-vmx-support-for-address-translation)
     - [Chapter 30 VMX Instruction Reference](##chapter-30-vmx-instruction-reference)
 
-# Volume 1 Basic Architecture
+## Volume 1 Basic Architecture
 
-## Chapter 3 Basic Execution Environment
+### Chapter 3 Basic Execution Environment
 
-### Modes of Operation
+#### Modes of Operation
 
 - **Protected mode**:
   - native state of the processor.
@@ -36,13 +39,13 @@
 
 - **System Management Mode (SMM)**:
   - implements platform-specific functions such as power management and system security.
-  - cpu enters SMM modes when SMI is received from the APIC or when the external SMM interrupt pin (SMI#) is activated.
+  - cpu enters SMM modes when SMI is received from the APIC or when the external SMM interrupt pin (SMI##) is activated.
 - Intel 64 architecture adds the **IA-32e mode**. IA-32e mode has two sub-modes:
   - **Compatibility mode**: permits most legacy 16-bit and 32-bit apps to run without re-compilation under a 64-bit OS.
   - **Long mode**: This mode enables a 64-bit OS to run apps written to access 64-bit linear address space.
   - In 64-bits mode: GPR and SIMD registers extends from 8 to 16 + GPR are widened to 64 bits.
 
-### Overview of the Basic Execution Environment
+#### Overview of the Basic Execution Environment
 
 - Any program or task running on an IA-32 processor is given a set of resources for executing instructions and for storing code, data, and state information.
 
@@ -50,9 +53,9 @@
 
 <p align="center"> <img src="https://i.imgur.com/5V6dS2F.png" width="500px" height="auto"></p>
 
-### Memory Organization
+#### Memory Organization
 
-#### IA-32 Memory Models
+##### IA-32 Memory Models
 
 - programs do not directly address physical memory, istead, they access memory using one of three memory models: `flat`, `segmented`, or `real` address mode.
 - **Flat memory model**:
@@ -75,7 +78,7 @@
 
  <p align="center"> <img src="https://i.imgur.com/EfpFmVB.png" width="500px" height="auto"></p>
 
-#### Paging and Virtual Memory
+##### Paging and Virtual Memory
 
 - when paging is disabled, each linear address has a one-to-one correspondence with a physical address.
 - when paging is enabled, linear address space is divided into pages which are mapped to virtual memory. The pages of virtual memory are then mapped as needed into physical memory.
@@ -84,7 +87,7 @@
   - `Physical Address Extensions (PAE)` to address physical address space greater than 4 GB.
   - `Page Size Extensions (PSE)` to map linear address to physical address in 4-MB pages.
 
-#### Modes of Operation vs. Memory Model
+##### Modes of Operation vs. Memory Model
 
 - relationship between operating modes and memory models is as follows:
   - **Protected mode**: the processor can use any of the memory models.
@@ -100,14 +103,14 @@
   - the processor treats the segment base of CS, DS, ES, and SS as zero in 64-bit mode (this makes a linear address equal an effective address).
   - Segmented and real address modes are not available in 64-bit mode.
 
-### Basic Program Execution Registers
+#### Basic Program Execution Registers
 
 - **General-purpose registers**: eight registers are available for storing operands and pointers.
 - **Segment registers**: hold upp to six segment selectors.
 - **EFLAGS** (program status and control) register: report on the status of the program being executed and allows limited (application-program level) control of the processor.
 - **EIP** (instruction pointer) register: contains a 32-bit pointer to the next instruction to be executed.
 
-#### General Purpose Registers
+##### General Purpose Registers
 
 - EAX — Accumulator for operands and results data
 - EBX — Pointer to data in the DS segment
@@ -120,7 +123,7 @@
 
  <p align="center"> <img src="https://i.imgur.com/cvFWSF9.png" width="500px" height="auto"></p>
 
-#### General-Purpose Registers in 64-Bit Mode
+##### General-Purpose Registers in 64-Bit Mode
 
 - 16 general purpose registers and the default operand size is 32 bits.
 - If a 32-bit operand size is specified: EAX,EBX, ECX, EDX, EDI, ESI, EBP, ESP, R8D - R15D are available.
@@ -129,7 +132,7 @@
 - All of these registers can be accessed at the byte, word, dword, and qword level.
 - REX prefixes are used to generate 64-bit operand sizes or to reference registers R8-R15.
 
-### Segment Registers
+#### Segment Registers
 
 - The segment registers (CS, DS, SS, ES, FS, and GS) hold 16-bit segment selectors.
 - A segment selector is a special pointer that identifies a segment in memory.
@@ -162,15 +165,15 @@
 
  <p align="center"> <img src="https://i.imgur.com/cixb0xe.png" width="600px" height="auto"></p>
 
-#### Segment Registers in 64-Bit Mode
+##### Segment Registers in 64-Bit Mode
 
 - In 64-bit mode: CS, DS, ES, SS are treated as if each segment base is 0, regardless of the value of the associated segment descriptor base.
 - This creates a flat address space for code, data, and stack. FS and GS are exceptions.
 - Limit checks for CS, DS, ES, SS, FS, and GS are disabled in 64-bit mode.
 
-## Chapter 6 Procedure Calls, Interrupts, and Exceptions
+### Chapter 6 Procedure Calls, Interrupts, and Exceptions
 
-### Stacks
+#### Stacks
 
 - A stack can be up to 4 GBytes long, the maximum size of a segment.
 - The stack **grows down** in memory (towards lesser addresses) when items are pushed on the stack and **shrinks up** (towards greater addresses) when the items are popped from the stack.
@@ -178,33 +181,33 @@
 - The processor references the SS register automatically for all stack operations. For example, when the ESP register is used as a memory address, it automatically points to an address in the current stack. Also, the CALL, RET, PUSH, POP, ENTER, and LEAVE instructions all perform operations on the current stack.
 <p align="center"><img src="https://i.imgur.com/bcoXzvx.png" width="500px" height="auto"></p>
 
-#### Stack-Frame Base Pointer
+##### Stack-Frame Base Pointer
 
 - The stack is typically divided into frames. Each stack frame can then contain local variables, parameters to be passed to another procedure, and procedure linking information.
 - The stack-frame base pointer (contained in the EBP register) identifies a fixed reference point within the stack frame for the called procedure. To use the stackframe base pointer, the called procedure typically copies the contents of the ESP register into the EBP register prior to pushing any local variables on the stack.
 - The stack
 
-#### Return Instruction Pointer
+##### Return Instruction Pointer
 
 - Prior to branching to the first instruction of the called procedure, the CALL instruction pushes the address in the EIP register onto the current stack.
 - This address is then called the return-instruction pointer and it points to the instruction where execution of the calling procedure should resume following a return from the called procedure.
 - Upon returning from a called procedure, the RET instruction pops the return-instruction pointer from the stack back into the EIP register. Execution of the calling procedure then resumes.
 
-#### Stack Behavior in 64-Bit Mode
+##### Stack Behavior in 64-Bit Mode
 
 - Address calculations that reference SS segments are treated as if the segment base is zero.
 - Fields (base, limit, and attribute) in segment descriptor registers are ignored. 
 - SS DPL is modified such that it is always equal to CPL
 - Some forms of segment load instructions are invalid (for example, LDS, POP ES).
 
-### Calling Procedures Using CALL and RET
+#### Calling Procedures Using CALL and RET
 
 - The CALL instruction allows control transfers to procedures within the current code segment (**near call**) and in a different code segment (**far call**).
 - Near calls usually provide access to local procedures within the currently running program or task.
 - Far calls are usually used to access operating system procedures or procedures in a different task.
 - The RET instruction also allows near and far returns to match the near and far versions of the CALL instruction.
 
-#### Far CALL and RET Operation
+##### Far CALL and RET Operation
 
 When executing a far call, the processor performs these actions:
 1. Pushes the current value of the CS register on the stack.
@@ -222,13 +225,13 @@ specified with the n operand to release parameters from the stack.
 
 <p align="center"> <img src="https://i.imgur.com/Nn0SFOy.png" width="500px" height="auto"></p>
 
-#### Parameter Passing
+##### Parameter Passing
 
 - Through the **General-Purpose Registers**: The processor does not save the state of the general-purpose registers on procedure calls.
 - Through the **Stack**: To pass a large number of parameters to the called procedure, the parameters can be placed on the stack.
 - Through the **Argument List**:  an alternate method of passing a larger number of parameters (or a data structure) to the called procedure is to place the parameters in an argument list in one of the data segments in memory. A pointer to the argument list can then be passed to the called procedure through a general-purpose register or the stack.
 
-#### Calls to Other Privilege Levels
+##### Calls to Other Privilege Levels
 
 - The IA-32 architecture’s protection mechanism recognizes four privilege levels, numbered from 0 to 3, where a greater number mean less privilege. 
 - The reason to use privilege levels is to improve the reliability of operating systems.
@@ -245,7 +248,7 @@ more privileged protection level than the calling procedure is handled in a simi
     - an offset into the code segment (that is, the instruction pointer for the called procedure).
   - The processor switches to a new stack to execute the called procedure. Each privilege level has its own stack. The segment selector and stack pointer for the privilege level 3 stack are stored in the SS and ESP registers, respectively, and are automatically saved when a call to a more privileged level occurs. The segment selectors and stack pointers for the privilege level 2, 1, and 0 stacks are stored in a system segment called the task state segment (TSS).
 
-#### CALL and RET Operation Between Privilege Levels
+##### CALL and RET Operation Between Privilege Levels
 
 When making a call to a more privileged protection level, the processor does the following (see Figure 6-4):
 1. Performs an access rights check (privilege check).
@@ -268,33 +271,33 @@ the calling procedure.
 
 <p align="center"> <img src="https://i.imgur.com/ZNrnZQd.png" width="500px" height="auto"></p>
 
-# Volume 2 Instruction Set Reference
+## Volume 2 Instruction Set Reference
 
-## Chapter 6 Safer Mode Extensions Reference
+### Chapter 6 Safer Mode Extensions Reference
 
-### Overview
+#### Overview
 
 - Provide a programming interface for system software to establish a measured environment within the platform to support trust decisions by end users.
 - The measurement and protection mechanisms used by a measured environment are supported by the capabilities of an Intel TXT.
 
-### SMX functionality
+#### SMX functionality
 
 - SMX functionality is provided in an Intel 64 processor through the **GETSEC** instruction via leaf functions.
 - Software can detect support for SMX operation using the ```CPUID.01H.ECX[Bit 6] == 1```
 
 
-# Volume 3 System Programming Guide
+## Volume 3 System Programming Guide
 
-## Chapter 2 System Architecture Overview
+### Chapter 2 System Architecture Overview
 
-### Overview of the System-Level Architecture
+#### Overview of the System-Level Architecture
 
 - System-level architecture consists of a set of registers, data structures, and instructions designed to support basic system-level operations such as memory management, interrupt and exception handling, task management, and control of multiple processors
 
 <p align="center"> <img src="https://i.imgur.com/O0QCFwt.png" width="700px" height="auto"></p>
 <p align="center"> <img src="https://i.imgur.com/gCayvoh.png" width="700px" height="auto"></p>
 
-#### Global and Local Descriptor Tables
+##### Global and Local Descriptor Tables
 
 - When operating in protected mode, all memory accesses pass through either the global descriptor table (GDT) or an optional local descriptor table (LDT).
 - These tables contain entries called segment descriptors and can contain up to 8192 (2^13) 8-byte descriptors.
@@ -302,26 +305,26 @@ the calling procedure.
 - Each segment descriptor has an associated segment selector.
 - A segment selector (16-bits) provides the software that uses it with an index into the GDT or LDT (the offset of its associated segment descriptor), a global/local flag (determines whether the selector points to the GDT or the LDT), and access rights information (CPL).
 
-##### Global and Local Descriptor Tables in IA-32e Mode
+###### Global and Local Descriptor Tables in IA-32e Mode
 
 - GDTR and LDTR registers are expanded to 64-bits wide in both IA-32e sub-modes.
 - GDT/LDT are expanded in 64-bit mode to support 64-bit base addresses, (16-byte LDT descriptors hold a 64-bit base address and various attributes).
 
-#### System Segments, Segment Descriptors, and Gates
+##### System Segments, Segment Descriptors, and Gates
 
 - The architecture defines two system segments: the task-state segment (TSS) and the LDT.
 - The architecture defines a set of special descriptors called gates: `call gates`, `interrupt gates`, `trap gates`, and `task gates`.
 - These gates provide protected gateways to system procedures and handlers that may operate at a different privilege level than application programs and most procedures.
 - For example, a CALL to a call gate can provide access to a procedure in a code segment that is at the same or a numerically lower privilege level (more privileged) than the current code segment.
 
-##### Gates in IA-32e Mode
+###### Gates in IA-32e Mode
 
 - In IA-32e mode, the following descriptors are 16-byte descriptors (expanded to allow a 64-bit base): LDT descriptors, 64-bit TSSs, call gates, interrupt gates, and trap gates.
 - Call gates facilitate transitions between 64-bit mode and compatibility mode. Task gates are not supported in IA-32e mode.
 - On privilege level changes, stack segment selectors are not read from the TSS. Instead, they are set to
   NULL.
 
-#### Task-State Segments and Task Gates
+##### Task-State Segments and Task Gates
 
 - The `TSS` defines the state of the execution environment for a task. It includes the state of:
   - GPR, segment registers, the EFLAGS register, the EIP register.
@@ -336,7 +339,7 @@ the calling procedure.
   5. Begins execution of the new task.
 - A task can also be accessed through a task gate. A task gate is similar to a call gate, except that it provides access (through a segment selector) to a TSS rather than a code segment
 
-#### Task-State Segments in IA-32e Mode
+##### Task-State Segments in IA-32e Mode
 
 - Hardware task switches are not supported in IA-32e mode. However, TSSs continue to exist.
 - The base address of a TSS is specified by its descriptor.
@@ -346,7 +349,7 @@ the calling procedure.
   - Offset address of the IO-permission bitmap (from the TSS base)
 - The task register is expanded to hold 64-bit base addresses in IA-32e mode.
 
-#### Interrupt and Exception Handling
+##### Interrupt and Exception Handling
 
 - External interrupts, software interrupts and exceptions are handled through the interrupt descriptor table (IDT).
 - The IDT stores a collection of _gate descriptors_ that provide access to interrupt and exception handlers
@@ -354,12 +357,12 @@ the calling procedure.
 - Gate descriptors in the IDT can be interrupt, trap, or task gate descriptors.
 - To access an interrupt or exception handler, the processor first receives an interrupt vector from internal hardware, an external interrupt controller, or from software by means of an INT n, INTO, INT3, INT1, or BOUND instruction.
 
-#### Memory Management
+##### Memory Management
 
 - The base physical address of the paging-structure hierarchy is contained in control register CR3.
 - The entries in the paging structures determine the physical address of the base of a page frame, access rights and memory management information.
 
-#### Memory Management in IA-32e Mode
+##### Memory Management in IA-32e Mode
 
 - Four levels of system data structures are used:
   - **The page map level 4 (PML4)** — An entry in a PML4 table contains the physical address of the base of a page directory pointer table, access rights, and memory management information. The base physical address of the PML4 is stored in CR3.
@@ -368,7 +371,7 @@ the calling procedure.
   - **Sets of page directories** — An entry in a page directory table contains the physical address of the base of a page table, access rights, and memory management information.
   - **Sets of page tables** — An entry in a page table contains the physical address of a page frame, access rights, and memory management information.
 
-#### System Registers
+##### System Registers
 
 - The `system flags` and `IOPL` field in the EFLAGS register control task and mode switching, interrupt handling, instruction tracing, and access rights.
 - The `control registers CR0, CR2, CR3, and CR4` contain a variety of flags and data fields for controlling system level operations.
@@ -377,7 +380,7 @@ the calling procedure.
 - The `TR task register` contains the linear address and size of the TSS for the current task.
 - Model-specific registers: group of registers available primarily to OS or executive procedures (that is code running at privilege level 0). These registers control items such as the debug extensions, the performance-monitoring counters, the machine- check architecture, and the memory type ranges (MTRRs)
 
-#### System Registers in IA-32e Mode
+##### System Registers in IA-32e Mode
 
 - system-descriptor-table registers (GDTR, IDTR, LDTR, and TR) are expanded in hardware to hold 64-bit base addresses.
 - EFLAGS becomes the 64-bit RFLAGS register.
@@ -392,7 +395,7 @@ the calling procedure.
   - **IA32_FMASK** — Used by SYSCALL instruction.
   - **IA32_STAR** — Used by SYSCALL and SYSRET instruction
 
-### MODES OF OPERATION
+#### MODES OF OPERATION
 
 <p align="center"> <img src="https://i.imgur.com/bbcrQlk.png" width="600px" height="auto"></p>
 
@@ -403,11 +406,11 @@ the calling procedure.
 - When running in IA-32e mode, 64-bit or compatibility sub-mode operation is determined by CS.L bit of the code segment.
 - The processor switches to SMM whenever it receives an SMI while the processor is in real-address, protected, virtual-8086, or IA-32e modes. Upon execution of the RSM instruction, the processor always returns to the mode it was in when the SMI occurred.
 
-### Extended Feature Enable Register
+#### Extended Feature Enable Register
 
 <p align="center"> <img src="https://i.imgur.com/FepFdCU.png" width="600px" height="auto"></p>
 
-### SYSTEM FLAGS AND FIELDS IN THE EFLAGS REGISTER
+#### SYSTEM FLAGS AND FIELDS IN THE EFLAGS REGISTER
 
 - The system flags and IOPL field of the EFLAGS register control I/O, maskable hardware interrupts, debugging, task switching, and the virtual-8086 mode.
 - Only privileged code (typically operating system or executive code) should be allowed to modify these bits.
@@ -418,32 +421,32 @@ the calling procedure.
 - IF: Set to respond to maskable hardware interrupt requests; cleared to inhibit maskable hardware interrupts.
 - IOPL: Indicates the I/O privilege level of the currently running program or task. The CPL of the currently running program or task must be less than or equal to the IOPL to access the I/O address space.
 - NT: Controls the chaining of interrupted and called tasks.
-- RF: Set to temporarily disables debug exceptions (#DB) from being generated for instruction breakpoints; cleared to generate debug exceptions.
+- RF: Set to temporarily disables debug exceptions (##DB) from being generated for instruction breakpoints; cleared to generate debug exceptions.
 - VM: Set to enable virtual-8086 mode; clear to return to protected mode.
 - AC: An alignment-check exception is generated when reference is made to an unaligned operand, such as a word at an odd byte address or a doubleword at an address which is not an integral multiple of four.
 - VIP: Set by software to indicate that an interrupt is pending; cleared to indicate that no interrupt is pending.
 - VIF: Contains a virtual image of the IF flag.
 - ID: The ability of a program or procedure to set or clear this flag indicates support for the CPUID instruction.
 
-### System Flags and Fields in IA-32e Mode
+#### System Flags and Fields in IA-32e Mode
 
 - In 64-bit mode, the RFLAGS register expands to 64 bits with the upper 32 bits reserved.
 - In IA-32e mode, the processor does not allow the VM bit to be set because virtual-8086 mode is not supported
 
-### MEMORY-MANAGEMENT REGISTERS
+#### MEMORY-MANAGEMENT REGISTERS
 
 - The processor provides four memory-management registers (GDTR, LDTR, IDTR, and TR) that specify the locations of the data structures which control segmented memory management
 
 <p align="center"> <img src="https://i.imgur.com/yx6piV0.png" width="600px" height="auto"></p>
 
-### Global Descriptor Table Register (GDTR)
+#### Global Descriptor Table Register (GDTR)
 
 - The GDTR register holds the base address (32 bits in protected mode; 64 bits in IA-32e mode) and the 16-bit table limit for the GDT
 - The base address specifies the linear address of byte 0 of the GDT; the table limit specifies the
   number of bytes in the table.
 - The `LGDT` and `SGDT` instructions load and store the GDTR register, respectively.
 
-### Local Descriptor Table Register (LDTR)
+#### Local Descriptor Table Register (LDTR)
 
 - The LDTR register holds the 16-bit segment selector, base address (32 bits in protected mode; 64 bits in IA-32e mode), segment limit, and descriptor attributes for the LDT.
 - The base address specifies the linear address of byte 0 of the LDT segment; the segment limit specifies the number of bytes in the segment.
@@ -452,23 +455,23 @@ the calling procedure.
 - LDT is intended to used per process and switched when the kernel switch between process contexts. GDT is for use system wide.
 - The OS sets those tables.
 
-### IDTR Interrupt Descriptor Table Register
+#### IDTR Interrupt Descriptor Table Register
 
 - The IDTR register holds the base address (32 bits in protected mode; 64 bits in IA-32e mode) and 16-bit table limit for the IDT.
 - The base address specifies the linear address of byte 0 of the IDT; the table limit specifies the number
   of bytes in the table.
 - The `LIDT` and `SIDT` instructions load and store the IDTR register, respectively.
 
-### Task Register (TR)
+#### Task Register (TR)
 
 - The task register holds the 16-bit segment selector, base address (32 bits in protected mode; 64 bits in IA-32e mode), segment limit, and descriptor attributes for the TSS of the current task.
 - The selector references the TSS descriptor in the GDT.
 - The base address specifies the linear address of byte 0 of the TSS; the segment limit specifies the number of bytes in the TSS.
 - The `LTR` and `STR` instructions load and store the segment selector part of the task register, respectively.
 
-## Chapter 3 Protected Mode Memory Management
+### Chapter 3 Protected Mode Memory Management
 
-### MEMORY MANAGEMENT OVERVIEW
+#### MEMORY MANAGEMENT OVERVIEW
 
 - memory managements facilities of the IA-32 archietcture are divided into two parts:
   - **Segmentation** provides a mechanism of isolating individual code, data, and stack modules so that multiple programs (or tasks) can run on the same processor without interfering with one another.
@@ -483,13 +486,13 @@ the calling procedure.
 - If paging is not used, the linear address space of the processor is mapped directly into the physical address space
   of processor.
 
-### USING SEGMENTS
+#### USING SEGMENTS
 
 - The segmentation mechanism supported by the IA-32 architecture can be used to implement a wide variety of
   system designs.
 - These designs range from flat models that make only minimal use of segmentation to protect programs to multi-segmented models that employ segmentation to create a robust operating environment in which multiple programs and tasks can be executed reliably.
 
-### Basic Flat Model
+#### Basic Flat Model
 
 - the operating system and application programs have access to a continuous, unsegmented address space.
 - this basic flat model hides the segmentation mechanism of the architecture from both the system designer and the application programmer.
@@ -501,7 +504,7 @@ the calling procedure.
 
 <p align="center"> <img src="https://i.imgur.com/tQ02vfP.png" width="600px" height="auto"></p
 
-### Protected Flat Model
+#### Protected Flat Model
 
 - The protected flat model is similar to the basic flat model, except the segment limits are set to include only the
   range of addresses for which physical memory actually exists.
@@ -509,7 +512,7 @@ the calling procedure.
 
 <p align="center"> <img src="https://i.imgur.com/dSPFaY8.png" width="600px" height="auto"></p
 
-### Multi-Segment Model
+#### Multi-Segment Model
 
 - A multi-segment model uses the full capabilities of the segmentation mechanism to provide hardware enforced protection of code, data structures, and programs and tasks.
 - Here, each program (or task) is given its own table of segment descriptors and its own segments.
@@ -523,7 +526,7 @@ the calling procedure.
 - For example, since code segments are designated as read-only segments, hardware can be used to prevent writes into code segments
 - The access rights information created for segments can also be used to set up protection rings or levels. Protection levels can be used to protect operating-system procedures from unauthorized access by application programs.
 
-### Segmentation in IA-32e Mode
+#### Segmentation in IA-32e Mode
 
 - In IA-32e mode of Intel 64 architecture, the effects of segmentation depend on whether the processor is running in compatibility mode or 64-bit mode.
 - In compatibility mode, segmentation functions just as it does using legacy 16-bit or 32-bit protected mode semantics.
@@ -532,7 +535,7 @@ the calling procedure.
 - The processor treats the segment base of CS, DS, ES, SS as zero, creating a linear address that is equal to the effective address.
 - The FS and GS segments are exceptions. These segment registers (which hold the segment base) can be used as additional base registers in linear address calculations. They facilitate addressing local data and certain operating system data structures.
 
-### Paging and Segmentation
+#### Paging and Segmentation
 
 - Paging can be used with any of the segmentation models described above.
 - The processor’s paging mechanism divides the linear address space (into which segments are mapped) into pages.
@@ -540,7 +543,7 @@ the calling procedure.
 - The paging mechanism offers several page-level protection facilities that can be used with or instead of the segment protection facilities.
 - For example, it lets read-write protection be enforced on a page-by-page basis. The paging mechanism also provides two-level user-supervisor protection that can also be specified on a page-by-page basis.
 
-### LOGICAL AND LINEAR ADDRESSES
+#### LOGICAL AND LINEAR ADDRESSES
 
 - At the system-architecture level in protected mode, the processor uses two stages of address translation to arrive at a physical address: logical-address translation through `segmentation` and linear address space through `paging`.
 - Segmentation provides a mechanism for dividing adressable memory space into segments.
@@ -554,13 +557,13 @@ the calling procedure.
 
 <p align="center"> <img src="https://i.imgur.com/jh5Bp46.png" width="600px" height="auto"></p>
 
-### Logical Address Translation in IA-32e Mode
+#### Logical Address Translation in IA-32e Mode
 
 - In 64-bit mode, the offset and base address of the segment are 64-bits instead of 32 bits.
 - The linear address format is also 64 bits wide and is subject to the canonical form requirement.
 - Each code segment descriptor provides an L bit. This bit allows a code segment to execute 64-bit code or legacy 32-bit code by code segment.
 
-### Segment Selectors
+#### Segment Selectors
 
 - A segment selector is a 16-bit identifier for a segment. It does not point directly to the segment, but instead points to the segment descriptor that defines the segment.
 
@@ -568,7 +571,7 @@ the calling procedure.
 
 - The first entry of the GDT is not used by the processor.
 
-### Segment Registers
+#### Segment Registers
 
 - To reduce address translation time and coding complexity, the processor provides registers for holding up to 6 segment selectors
 - Each of these segment registers support a specific kind of memory reference (code, stack, or data).
@@ -583,14 +586,14 @@ the calling procedure.
   1. Direct load instructions such as the MOV, POP, LDS, LES, LSS, LGS, and LFS instructions. These instructions explicitly reference the segment registers.
   2. Implied load instructions such as the far pointer versions of the CALL, JMP, and RET instructions, the SYSENTER and SYSEXIT instructions, and the IRET, INTn, INTO and INT3 instructions.
 
-### Segment Descriptors
+#### Segment Descriptors
 
 - A segment descriptor is a data structure in a GDT or LDT that provides the processor with the size and location of a segment, as well as access control and status information.
 - Segment descriptors are typically created by compilers, linkers, loaders, or the OS or executive, but not application programs.
 
 <p align="center"> <img src="https://i.imgur.com/yjnRlez.png" width="600px" height="auto"></p>
 
-### System Descriptor Types
+#### System Descriptor Types
 
 - When the S (descriptor type) flag in a segment descriptor is clear, the descriptor type is a system descriptor. The processor recognizes the following types of system descriptors:
   - Local descriptor-table (LDT) segment descriptor.
@@ -600,7 +603,7 @@ the calling procedure.
   - Trap-gate descriptor.
   - Task-gate descriptor.
 
-### Segment Descriptor Tables
+#### Segment Descriptor Tables
 
 - Each system must have one GDT defined, which may be used for all programs and tasks in the system. Optionally, one or more LDTs can be defined. For example, an LDT can be defined for each separate task being run, or some or all tasks can share the same LDT.
 
@@ -615,13 +618,13 @@ the calling procedure.
 - The LDT is located in a system segment of the LDT type. The GDT must contain a segment descriptor for the LDT segment. If the system supports multiple LDTs, each must have a separate segment selector and segment descriptor in the GDT. The segment descriptor for an LDT can be located anywhere in the GDT.
 - An LDT is accessed with its segment selector. To eliminate address translations when accessing the LDT, the segment selector, base linear address, limit, and access rights of the LDT are stored in the LDTR register
 
-## Chapter 4 Paging
+### Chapter 4 Paging
 
 - Paging translates each linear address to a physical address and determines, for each translation, what
   accesses to the linear address are allowed (the address’s access rights) and the type of caching used for such
   accesses (the address’s memory type)
 
-### PAGING MODES AND CONTROL BITS
+#### PAGING MODES AND CONTROL BITS
 
 - Paging behavior is controlled by the following control bits:
   - The WP and PG flags in control register CR0 (bit 16 and bit 31, respectively).
@@ -631,7 +634,7 @@ the calling procedure.
   - The AC flag in the EFLAGS register (bit 18).
 - Software enables paging by using the MOV to CR0 instruction to set CR0.PG.
 
-### Three Paging Modes
+#### Three Paging Modes
 
 - If `CR0.PG = 0`, paging is not used. The logical processor treats all linear addresses as if they were physical addresses. CR4.PAE and IA32_EFER.LME are ignored by the processor, as are CR0.WP, CR4.PSE, CR4.PGE, CR4.SMEP, CR4.SMAP, and IA32_EFER.NXE.
 - Paging is enabled if `CR0.PG = 1`. Paging can be enabled only if protection is enabled (`CR0.PE = 1`).
@@ -643,11 +646,11 @@ the calling procedure.
 
 <p align="center"> <img src="https://i.imgur.com/zXoVCCw.png" width="600px" height="auto"></p>
 
-### Paging-Mode Enabling
+#### Paging-Mode Enabling
 
 <p align="center"> <img src="https://i.imgur.com/QUBkDw5.png" width="600px" height="auto"></p>
 
-### Paging-Mode Modifiers
+#### Paging-Mode Modifiers
 
 - Details of how each paging mode operates are determined by the following control bits:
   - The **WP** flag in CR0 allows pages to be protected from supervisor-mode writes.
@@ -662,7 +665,7 @@ the calling procedure.
   - The **NXE** enables execute-disable access rights for PAE paging and 4-level paging. If IA32_EFER.NXE = 1,
     instruction fetches can be prevented from specified linear addresses
 
-### HIERARCHICAL PAGING STRUCTURES: AN OVERVIEW
+#### HIERARCHICAL PAGING STRUCTURES: AN OVERVIEW
 
 - **32-bit paging**:
   - each paging structure comprises 1024 = 2^10 entries.
@@ -682,12 +685,12 @@ the calling procedure.
 
 <p align="center"> <img src="https://i.imgur.com/xsLNtRp.png" width="600px" height="auto"></p>
 
-### 32-BIT PAGING
+#### 32-BIT PAGING
 
 <p align="center"> <img src="https://i.imgur.com/yk5DDik.png" width="500px" height="auto"></p>
 <p align="center"> <img src="https://i.imgur.com/graLHn1.png" width="500px" height="auto"></p>
 
-### PAE PAGING
+#### PAE PAGING
 
 - With PAE paging, a logical processor maintains a set of four (4) PDPTE registers (64-bits), which are loaded from an address in CR3.
 - Linear address are translated using 4 hierarchies of in-memory paging structures, each located using one of the **PDPTE registers**. (This is different from the other paging modes, in which there is one hierarchy referenced by CR3.
@@ -699,7 +702,7 @@ the calling procedure.
 <p align="center"> <img src="https://i.imgur.com/tZxmqVu.png" width="500px" height="auto"></p>
 <p align="center"> <img src="https://i.imgur.com/DPSmC3x.png" width="500px" height="auto"></p>
 
-### 4-LEVEL PAGING
+#### 4-LEVEL PAGING
 
 - Use of CR3 with 4-level paging depends on whether processcontext identifiers (PCIDs) have been enabled by setting CR4.PCIDE
 
@@ -708,14 +711,14 @@ the calling procedure.
 <p align="center"> <img src="https://i.imgur.com/QcWP0ZZ.png" width="500px" height="auto"></p>
 <p align="center"> <img src="https://i.imgur.com/2gEHP0B.png" width="500px" height="auto"></p>
 
-### Protection Keys
+#### Protection Keys
 
 - The protection-key feature provides an additional mechanism by which 4-level paging controls access to usermode addresses.
 - When CR4.PKE = 1, every linear address is associated with the 4-bit protection key located in bits 62:59 of the paging-structure entry that mapped the page containing the linear address.
 - The PKRU register determines, for each protection key, whether user-mode addresses with that protection key may be
   read or written.
 
-### PAGE-FAULT EXCEPTIONS
+#### PAGE-FAULT EXCEPTIONS
 
 - Accesses using linear addresses may cause page-fault exceptions (#PF; exception 14).
 - An access to a linear address may cause a page-fault exception for either of two reasons:
@@ -724,21 +727,21 @@ the calling procedure.
 
 <p align="center"> <img src="https://i.imgur.com/XIIyvJN.png" width="500px" height="auto"></p>
 
-### ACCESSED AND DIRTY FLAGS
+#### ACCESSED AND DIRTY FLAGS
 
 - Whenever the processor uses a paging-structure entry as part of linear-address translation, it sets the **accessed** flag in that entry (if it is not already set).
 - Whenever there is a write to a linear address, the processor sets the dirty flag (if it is not already set) in the paging structure entry that identifies the final physical address for the linear address (either a PTE or a paging-structure entry in which the PS flag is 1).
 
-## Chapter 6 Interrupt and Exception Handling
+### Chapter 6 Interrupt and Exception Handling
 
-### Interrupt And Exception Overview
+#### Interrupt And Exception Overview
 
 - **Interrupts** and **exceptions** are events that indicate that a condition exists somewhere in the system, the processor, or within the currently executing program or task that requires the attention of a processor.
 - They typically result in a forced transfer of execution from the currently running program or task to a special software routine or task called an **interrupt handler** or an **exception handler**.
 - Interrupts occur at random times during the execution of a program, in response to signals from hardware. System hardware uses interrupts to handle events external to the processor, such as requests to service peripheral devices. Software can also generate interrupts by executing the INT n instruction.
 - Exceptions occur when the processor detects an error condition while executing an instruction, such as division by zero. The processor detects a variety of error conditions including protection violations, page faults, and internal machine faults.
 
-### Exception and Interrupt Vectors
+#### Exception and Interrupt Vectors
 
 - To aid in handling exceptions and interrupts, each architecturally defined exception and each interrupt condition
 requiring special handling by the processor is assigned a unique identification number, called a **vector number**.
@@ -748,24 +751,24 @@ requiring special handling by the processor is assigned a unique identification 
 
 <p align="center"> <img src="https://i.imgur.com/lSdAuQl.png" width="600px" height="auto"></p>
 
-### Sources of Interrupts
+#### Sources of Interrupts
 
 - The processor receives interrupts from two sources:
   - External (hardware generated) interrupts.
   - Software-generated interrupts.
 
-#### External Interrupts
+##### External Interrupts
 
 - External interrupts are received through pins on the processor or through the local APIC.
 - When the local APIC is enabled, the `LINT[1:0]` pins can be programmed through the APIC’s **local vector table(LVT)** to be associated with any of the processor’s exception or interrupt vectors
 - When the local APIC is global/hardware disabled, these pins are configured as INTR and NMI pins, respectively.
 
-#### Maskable Hardware Interrupts
+##### Maskable Hardware Interrupts
 
 - Any external interrupt that is delivered to the processor by means of the INTR pin or through the local APIC is called a **maskable hardware interrupt**.
 - The IF flag in the EFLAGS register permits all maskable hardware interrupts to be masked as a group.
 
-#### Software-Generated Interrupts
+##### Software-Generated Interrupts
 
 - The **INT n** instruction permits interrupts to be generated from within software by supplying an interrupt vector number as an operand.
 - Any of the interrupt vectors from 0 to 255 can be used as a parameter in this instruction.
@@ -773,52 +776,52 @@ requiring special handling by the processor is assigned a unique identification 
 - Interrupts generated in software with the INT n instruction cannot be masked by the IF flag in the EFLAGS register.
 
 
-### Sources of Exceptions
+#### Sources of Exceptions
 
 - The processor receives exceptions from three sources:
   - Processor-detected program-error exceptions.
   - Software-generated exceptions.
   - Machine-check exceptions.
 
-#### Program-Error Exceptions
+##### Program-Error Exceptions
 
 - The processor generates one or more exceptions when it detects program errors during the execution in an application program or the operating system or executive.
 
-#### Software-Generated Exceptions
+##### Software-Generated Exceptions
 
 - The **INTO, INT1, INT3, and BOUND** instructions permit exceptions to be generated in software.
 - The INT n instruction can be used to emulate exceptions in software; but there is a limitation.
 - If INT n provides a vector for one of the architecturally-defined exceptions, the processor generates an interrupt to the correct vector (to access the exception handler) but does not push an error code on the stack. This is true even if the associated hardware-generated exception normally produces an error code. The exception handler will still attempt to pop an error code from the stack while handling the exception. Because no error code was pushed, the handler will pop off and discard the EIP instead (in place of the missing error code). This sends the return to the wrong location.
 
-#### Machine-Check Exceptions
+##### Machine-Check Exceptions
 
 - The P6 family and Pentium processors provide both internal and external machine-check mechanisms for checking the operation of the internal chip hardware and bus transactions.
 - These mechanisms are implementation dependent. When a machine-check error is detected, the processor signals a machine-check exception (vector 18) and
 returns an error code.
 
-### Exceptions Classifications
+#### Exceptions Classifications
 
 - Exceptions are classified as **faults, traps, or aborts** depending on the way they are reported and whether the instruction that caused the exception can be restarted without loss of program or task continuity:
   - Faults: A fault is an exception that can generally be corrected and that, once corrected, allows the program to be restarted with no loss of continuity. When a fault is reported, the processor restores the machine state to the state prior to the beginning of execution of the faulting instruction. The return address (saved contents of the CS and EIP registers) for the fault handler points to the faulting instruction, rather than to the instruction following the faulting instruction.
   - Traps: A trap is an exception that is reported immediately following the execution of the trapping instruction. Traps allow execution of a program or task to be continued without loss of program continuity. The return address for the trap handler points to the instruction to be executed after the trapping instruction.
   - Aborts: An abort is an exception that does not always report the precise location of the instruction causing the exception and does not allow a restart of the program or task that caused the exception. Aborts are used to report severe errors, such as hardware errors and inconsistent or illegal values in system tables.
 
-### Exception and Interrupt Handling
+#### Exception and Interrupt Handling
 
 
 
-## Chapter 11 Memory Cache Control
+### Chapter 11 Memory Cache Control
 
-### Internal caches, TLBs, and buffers
+#### Internal caches, TLBs, and buffers
 
 - The Intel 64 and IA-32 architectures support cache, translation look aside buffers (TLBs), and a store buffer for temporary on-chip (and external) storage of instructions and data. !attach picture later
 
 
-### Methods Of Caching Available
+#### Methods Of Caching Available
 
 <p align="center"><img src="https://i.imgur.com/gVtPKG5.png"  width="700px" height="auto"></p>
 
-### Page Attribute Table (PAT)
+#### Page Attribute Table (PAT)
 
 - The **Page Attribute Table (PAT)** extends the IA-32 architecture’s page-table format to allow memory types to be
 assigned to regions of physical memory based on linear address mappings.
@@ -826,40 +829,85 @@ assigned to regions of physical memory based on linear address mappings.
   - MTRRs allow mapping of memory types to regions of the physical address space, 
   - where the PAT allows mapping of memory types to pages within the linear address space. 
 
-## Chapter 22 Architecture Compatibility
+### Chapter 17 Debug, Branch Profile, TSC, and Intel® Resource Director Technology (Intel® RDT) Features
 
-### Model-Specific Registers
+#### Overview of Debug Support Facilities
+
+- The following processor facilities support debugging and performance monitoring:
+  - **Debug exception (#DB)** — Transfers program control to a debug procedure or task when a debug event occurs.
+  - **Breakpoint exception (#BP)** — See breakpoint instruction (INT3) below.
+  - **Breakpoint-address registers (DR0 through DR3)** — Specifies the addresses of up to 4 breakpoints.
+  - **Debug status register (DR6)** — Reports the conditions that were in effect when a debug or breakpoint exception was generated.
+  - **Debug control register (DR7)** — Specifies the forms of memory or I/O access that cause breakpoints to be generated.
+  - **Trap flag, TSS** — Generates a debug exception (#DB) when an attempt is made to switch to a task with the T flag set in its TSS.
+  - **RF (resume) flag, EFLAGS register** — Suppresses multiple exceptions to the same instruction.
+  - **TF (trap) flag, EFLAGS register** — Generates a debug exception (#DB) after every execution of an instruction.
+  - **Breakpoint instruction (INT3)** — Generates a breakpoint exception (#BP) that transfers program control to the debugger procedure or task. This instruction is an alternative way to set instruction breakpoints. It is especially useful when more than four breakpoints are desired, or when breakpoints are being placed in the source code.
+  - **Last branch recording facilities** — Store branch records in the **last branch record (LBR)** stack MSRs for the most recent taken branches, interrupts, and/or exceptions in MSRs. A branch record consist of a branch-from and a branch-to instruction address. Send branch records out on the system bus as branch trace messages (BTMs).
+
+#### Debug Exceptions
+
+- The Intel 64 and IA-32 architectures dedicate two interrupt vectors to handling debug exceptions: vector 1 (debug exception, #DB) and vector 3 (breakpoint exception, #BP). The following sections describe how these exceptions are generated and typical exception handler operations.
+
+<p align="center"><img src="https://i.imgur.com/U1P42xk.png"  width="500px" height="auto"></p>
+
+- Debug registers are privileged resources; a MOV instruction that accesses these registers can only be executed in real-address mode, in SMM or in protected mode at a CPL of 0.
+- An attempt to read or write the debug registers from any other privilege level generates a general-protection exception (#GP).
+
+##### Debug Address Registers (DR0-DR3)
+
+- Each of the debug-address registers (DR0 through DR3) holds the **32-bit linear address** of a breakpoint
+- Breakpoint comparisons are made before physical address translation occurs. The contents of debug register DR7 further specifies breakpoint conditions.
+
+#### Debug Registers DR4 and DR5
+
+- Debug registers DR4 and DR5 are reserved when debug extensions are enabled (when the DE flag in control register CR4 is set) and attempts to reference the DR4 and DR5 registers cause invalid-opcode exceptions (#UD).
+- When debug extensions are not enabled (when the DE flag is clear), these registers are aliased to debug registers DR6 and DR7.
+
+#### Debug Status Register (DR6)
+
+- The debug status register (DR6) reports debug conditions that were sampled at the time the last debug exception was generated.
+- Updates to this register only occur when an exception is generated. The flags in this register show the following information:
+  - **B0 through B3 (breakpoint condition detected) flags (bits 0 through 3)** — Indicates (when set) that its associated breakpoint condition was met when a debug exception was generated.
+  - **BD (debug register access detected) flag (bit 13)** — Indicates that the next instruction in the instruction stream accesses one of the debug registers (DR0 through DR7). This flag is enabled when the GD (general detect) flag in debug control register DR7 is set.
+  - **BS (single step) flag (bit 14)** — Indicates (when set) that the debug exception was triggered by the singlestep execution mode (enabled with the TF flag in the EFLAGS register). The single-step mode is the highest priority debug exception. When the BS flag is set, any of the other debug status bits also may be set.
+  - **BT (task switch) flag (bit 15)** — Indicates (when set) that the debug exception resulted from a task switch where the T flag (debug trap flag) in the TSS of the target task was set.
+  - **RTM (restricted transactional memory) flag (bit 16)** — Indicates (when clear) that a #DB or #BP occurred inside an RTM region while advanced debugging of RTM transactional regions was enabled. This bit is set for any other debug exception (including all those that occur when advanced debugging of RTM transactional regions is not enabled). This bit is always 1 if the processor does not support RTM.
+
+### Chapter 22 Architecture Compatibility
+
+#### Model-Specific Registers
 
 - The Pentium processor introduced a set of model-specific registers (**MSRs**) for use in controlling hardware functions and performance monitoring.
 
-### Memory Type Range Registers
+#### Memory Type Range Registers
 
 - Memory type range registers (**MTRRs**) are a new feature introduced into the IA-32 in the Pentium Pro processor. MTRRs allow the processor to optimize memory operations for different types of memory, such as RAM, ROM, frame buffer memory, and memory-mapped I/O.
 - MTRRs are MSRs that contain an internal map of how physical address ranges are mapped to various types of memory. The processor uses this internal memory map to determine the **cacheability** of various physical memory locations and the optimal method of accessing memory locations.
 - For example, if a memory location is specified in an MTRR as write-through memory, the processor handles accesses to this location as follows. It reads data from that location in lines and caches the read data or maps all writes to that location to the bus and updates the cache to maintain cache coherency.
 - In mapping the physical address space with MTRRs, the processor recognizes five types of memory: _uncacheable (UC), uncacheable, speculatable, write-combining (WC), write-through (WT), write-protected (WP), and writeback (WB)_.
 
-## Chapter 23 Introduction To Virtual Machine Extensions
+### Chapter 23 Introduction To Virtual Machine Extensions
 
-### Virtual Machine Architecture
+#### Virtual Machine Architecture
 
 - Virtual Machine Monitor (VMM) aka (Hypervisor) act as host and has full control of the processor(s) and the hardware (physical memory, interrupt management and I/O).
 - It provides the guest or the (Virtual Machine) with an abstraction of a virtual processor, allowing it to think it is execute directly on the LP.
 
-### Introduction To VMX Operation
+#### Introduction To VMX Operation
 
 - Processor support for virtualization is provided by a form of processor operation called VMX (Virtual Machine eXtensions).
 - There are two kind of VMX operations: - VMX root operation (VMM will generally run here). - VMX non-root operation (VM will generally run here).
 
 * The main differences between these two modes is that in root mode, a new set of new instructions (VMX instructions) is available and that the values that can be loaded into certain control registers are limited.
 
-### Life Cycle of VMM Software
+#### Life Cycle of VMM Software
 
 - The following items summarize the life cycle of a VMM and its guest software as well as the interactions between them: - Software enters VMX operation by executing a VMXON instruction. - Using VM entries, a VMM can then turn guests into VMs (one at a time). The VMM effects a VM entry using instructions VMLAUNCH and VMRESUME; it regains control using VM exits. - VM exits transfer control to an entry point specified by the VMM. The VMM can take action appropriate to the cause of the VM exit and can then return to the VM using a VM entry. - Eventually, the VMM may decide to shut itself down and leave VMX operation. It does so by executing the VMXOFF instruction.
 
 <p align="center"><img src="https://i.imgur.com/Vpvq9Gi.png"  width="400px" height="auto"></p>
 
-### Virtual-machine Control Structure
+#### Virtual-machine Control Structure
 
 - VMCS is a data structure which control the behavior of processor in VMX non-root mode and control VMX transitions.
 - Access to the VMCS is managed through a component of processor state called the VMCS pointer (one per LP).
@@ -869,14 +917,14 @@ assigned to regions of physical memory based on linear address mappings.
 - A VMM can use a different VMCS for each VM that it supports.
 - For a VM with multiple LPs(LPs) or Virtual CPUs (vCPUs), the VMM can use a different VMCS for each vCPU.
 
-### Discovering Support For VMX
+#### Discovering Support For VMX
 
 - Before system software enters into VMX operation, it must discover the presence of VMX support in the processor.
 - This is achieved by executing cpuid (1) and checking if ECX.VMX (bit 5) = 1, them VMX operations is supported.
 - The VMX architecture is designed to be extensible so that future processors in VMX operation can support additional features not present in first-generation implementations of the VMX architecture.
 - The availability of extensible VMX features is reported to software using a set of VMX capability MSRs.
 
-### Enabling And Entering VMX Operation
+#### Enabling And Entering VMX Operation
 
 - Before system software can enter VMX operation, it enables VMX by setting **CR4.VMXE[bit 13] = 1**.
 - VMXON causes an invalid-opcode exception (#UD) if executed with CR4.VMXE = 0.
@@ -888,7 +936,7 @@ assigned to regions of physical memory based on linear address mappings.
 - To enable VMX support in a platform, **BIOS must set bit 1, bit 2, or both , as well as the lock bit**.
 - Before executing VMXON, software should allocate a naturally aligned **4-KByte** region of memory that a LP may use to support VMX operation. This region is called the **VMXON region**. The address of the VMXON region (the VMXON pointer) is provided in an operand to VMXON.
 
-### Restrictions On VMX Operation
+#### Restrictions On VMX Operation
 
 - VMX operation places restrictions on processor operation:
   - In VMX operation, processors may fix certain bits in **CR0** and **CR4** to specific values and not support other values. VMXON fails if any of these bits contains an unsupported value.
@@ -900,9 +948,9 @@ assigned to regions of physical memory based on linear address mappings.
 - The restrictions on CR0.PE and CR0.PG imply that VMX operation is supported only in paged protected mode. Therefore, guest software cannot be run in unpaged protected mode or in real-address mode.
 - Later processors support a VM-execution control called “unrestricted guest”. If this control is 1, CR0.PE and CR0.PG may be 0 in VMX non-root operation (even if the capability MSR IA32_VMX_CR0_FIXED0 reports otherwise). Such processors allow guest software to run in unpaged protected mode or in real-address mode.
 
-## Chapter 24 Virtual Machine Control Structures
+### Chapter 24 Virtual Machine Control Structures
 
-### Overview
+#### Overview
 
 - At any given time, at most one of the active VMCSs is the current VMCS.
 - The VMLAUNCH, VMREAD, VMRESUME, and VMWRITE instructions operate only on the current VMCS.
@@ -916,7 +964,7 @@ assigned to regions of physical memory based on linear address mappings.
 
 <p align="center"><img src="https://i.imgur.com/RFdaRU8.png"  width="500px" height="auto"></p>
 
-### Format Of The VMCS Region
+#### Format Of The VMCS Region
 
 - A VMCS region comprises up tp 4KB. To determine the exact size of the VMCS region, check VMX capability MSR IA32_VMX_BASIC.
 - The format of a VMCS is structured as below:
@@ -937,7 +985,7 @@ assigned to regions of physical memory based on linear address mappings.
 - The remainder of the VMCS region is used for VMCS data (those parts of the VMCS that control VMX non-root operation and the VMX transitions). The format of these data is implementation-specific.
 - To ensure proper behavior in VMX operation, software should maintain the VMCS region and related structures in writeback cacheable memory, check the VMX capability MSR IA32_VMX_BASIC.
 
-### Organization Of VMCS Data
+#### Organization Of VMCS Data
 
 The VMCS data are organized into six logical groups:
 
@@ -948,26 +996,26 @@ The VMCS data are organized into six logical groups:
 - VM-entry control fields: These fields control VM entries.
 - VM-exit information fields: These fields receive information on VM exits and describe the cause and the nature of VM exits. On some processors, these fields are read-only.
 
-### VMCS Layout
+#### VMCS Layout
 
 - The VMCS layout is available in a form of table here: [VMCS Layout.pdf](../master/pdf/VMCS.pdf)
 
-### VMCS Types: Ordinary And Shadow
+#### VMCS Types: Ordinary And Shadow
 
 - Every VMCS is either an **ordinary VMCS** or a **shadow VMCS**. A VMCS’s type is determined by the shadow-VMCS indicator in the VMCS region.
 - A shadow VMCS differs from an ordinary VMCS in two ways: - An ordinary VMCS can be used for VM entry but a shadow VMCS cannot. Attempts to perform VM entry when the current VMCS is a shadow VMCS fail. - The VMREAD and VMWRITE instructions can be used in VMX non-root operation to access a shadow VMCS but not an ordinary VMCS.
 
-### Software Use of Virtual-Machine Control Structures
+#### Software Use of Virtual-Machine Control Structures
 
 - To ensure proper processor behavior, software should observe certain guidelines when using an active VMCS: - No VMCS should ever be active on more than one LP - Software should not modify the shadow-VMCS indicator (see Table 24-1) in the VMCS region of a VMCS that is active. - Software should use the VMREAD and VMWRITE instructions to access the different fields in the current VMCS.
 
-### VMREAD, VMWRITE, and Encodings of VMCS Fields
+#### VMREAD, VMWRITE, and Encodings of VMCS Fields
 
 - Every field of the VMCS is associated with a 32-bit value that is its **encoding**. The encoding is provided in an operand to VMREAD and VMWRITE when software wishes to read or write that field.
 - The structure of the 32-bit encodings of the VMCS components is determined principally by the width of the fields and their function in the VMCS.
   <p align="center"><img src="https://i.imgur.com/Ve19xHd.png"  width="600px" height="auto"></p>
 
-### Initializing a VMCS
+#### Initializing a VMCS
 
 - Software should initialize fields in a VMCS (using VMWRITE) before using the VMCS for VM entry.
 - A processor maintains some VMCS information that cannot be modified with the VMWRITE instruction; this includes a VMCS’s launch state. Such information may be stored in the VMCS data portion of a VMCS region. Because the format of this information is **implementation-specific**, there is no way for software to know, when it first allocates a region of memory for use as a VMCS region, how the processor will determine this information from the contents of the memory region.
@@ -975,7 +1023,7 @@ The VMCS data are organized into six logical groups:
 - VMLAUNCH should be used for the first VM entry using a VMCS after VMCLEAR has been executed for that VMCS.
 - VMRESUME should be used for any subsequent VM entry using a VMCS (until the next execution of VMCLEAR for the VMCS)
 
-### VMXON Region
+#### VMXON Region
 
 - The amount of memory required for the VMXON region is the same as that required for a VMCS region. This size is implementation specific and can be determined by consulting the VMX capability **MSR IA32_VMX_BASIC**.
 - Software can determine a processor’s physical-address width by executing CPUID with **80000008H** in EAX. The physical-address width is returned in bits 7:0 of EAX.
@@ -985,17 +1033,17 @@ The VMCS data are organized into six logical groups:
 - The VMXON region should be zeroed prior to executing vmxon.
   <p align="center"><img src="https://i.imgur.com/fyqHlHu.png"  width="600px" height="auto"></p>
 
-## Chapter 25 VMX Non-Root Operation
+### Chapter 25 VMX Non-Root Operation
 
-### Instructions That Cause VM Exits Unconditionally
+#### Instructions That Cause VM Exits Unconditionally
 
 - The following instructions cause VM exits when they are executed in VMX non-root operation: - CPUID, GETSEC, INVD, and XSETBV. - INVEPT, INVVPID, VMCALL, VMCLEAR, VMLAUNCH, VMPTRLD, VMPTRST, VMRESUME, VMXOFF, and VMXON.
 
-### Instructions That Cause VM Exits Conditionally
+#### Instructions That Cause VM Exits Conditionally
 
 - Instructions cause VM exits in VMX non-root operation depending on the setting of the VM-execution controls. - CLTS - ENCLS - HLT - IN, INS/INSB/INSW/INSD, OUT, OUTS/OUTSB/OUTSW/OUTSD. - INVLPG - INVPCID - LGDT, LIDT, LLDT, LTR, SGDT, SIDT, SLDT, STR - LMSW - MONITOR - MOV from CR3/CR8, MOV to CR0/1/3/4/8 - MOV DR - MWAIT - PAUSE - RDMSR, WRMSR - RDPMC - RDRAND, RDSEED - RDTSC, RDTSCP - RSM - VMREAD, VMWRITE - WBINVD - XRSTORS, XSAVES
 
-### Other Causes Of VM-Exits
+#### Other Causes Of VM-Exits
 
 - In addition to VM exits caused by instruction execution, the following events can cause VM exits:
 - **Exceptions**: - (faults, traps, and aborts) cause VM exits based on the exception bitmap). - If an exception occurs, its vector (in the range 0–31) is used to select a bit in the exception bitmap. - If the bit is 1, a VM exit occurs; if the bit is 0, the exception is delivered normally through the guest IDT.
@@ -1008,9 +1056,9 @@ The VMCS data are organized into six logical groups:
 - **System-management interrupts (SMIs)**: - If the logical processor is using the dual-monitor treatment of SMIs and system-management mode (SMM), SMIs cause SMM VM exits.
 - **VMX-preemption timer**: - A VM exit occurs when the timer counts down to zero.
 
-## Chapter 28 VMX Support For Address Translation
+### Chapter 28 VMX Support For Address Translation
 
-### VIRTUAL PROCESSOR IDENTIFIERS (VPIDS)
+#### VIRTUAL PROCESSOR IDENTIFIERS (VPIDS)
 
 - The original architecture for VMX operation required VMX transitions to flush the TLBs and paging-structure caches.
 - This ensured that translations cached for the old linear-address space would not be used after the transition.
@@ -1018,14 +1066,14 @@ The VMCS data are organized into six logical groups:
   information for multiple linear-address spaces.
 - When VPIDs are used, VMX transitions may retain cached information and the logical processor switches to a different linear-address space.
 
-### THE EXTENDED PAGE TABLE MECHANISM (EPT)
+#### THE EXTENDED PAGE TABLE MECHANISM (EPT)
 
 - The **extended page-table mechanism (EPT)** is a feature that can be used to support the virtualization of physical
   memory.
 - When EPT is in use, certain addresses that would normally be treated as physical addresses (and used to access memory are instead treated as guest-physical addresses.
 - Guest-physical addresses are translated by traversing a set of EPT paging structures to produce physical addresses that are used to access memory.
 
-### EPT Overview
+#### EPT Overview
 
 - The translation from guest-physical addresses to physical addresses is determined by a set of EPT paging structures.
 - The EPT paging structures are similar to those used to translate linear addresses while the processor is in IA-32e mode.
@@ -1036,7 +1084,7 @@ The VMCS data are organized into six logical groups:
 - EPT specifies the privileges that software is allowed when accessing the address. Attempts at disallowed accesses are called **EPT violations** and cause VM exits.
 - A processor uses EPT to translate guest-physical addresses only when those addresses are used to access memory.
 
-### EPT Translation Mechanism
+#### EPT Translation Mechanism
 
 - The EPT translation mechanism uses only bits 47:0 of each guest-physical address.
 - It uses a page-walk length of 4, meaning that at most 4 EPT paging-structure entries are accessed to translate a guest-physical address.
@@ -1044,9 +1092,9 @@ The VMCS data are organized into six logical groups:
   - EPT Page-Directory-Pointer-Table Entry (PDPTE) that Maps a 1-GByte Page
   - EPT Page-Directory Entry (PDE) that Maps a 2-MByte Page
 
-## Chapter 30 VMX Instruction Reference
+### Chapter 30 VMX Instruction Reference
 
-### Overview
+#### Overview
 
 - The virtual-machine extensions (VMX) includes five instructions that manage the virtual-machine control structure (VMCS, four instructions that manage VMX operation, two TLB-management instructions, and two instructions for use by guest software.
 - The behavior of the VMCS-maintenance instructions is summarized below:
@@ -1064,9 +1112,9 @@ The VMCS data are organized into six logical groups:
   - **INVEPT** — This instruction invalidates entries in the TLBs and paging-structure caches that were derived from extended page tables (EPT).
   - **INVVPID** — This instruction invalidates entries in the TLBs and paging-structure caches based on a VirtualProcessor Identifier (VPID).
 
-# Appendix A VMX Capability Reporting Facility
+## Appendix A VMX Capability Reporting Facility
 
-## RESERVED CONTROLS AND DEFAULT SETTINGS
+### RESERVED CONTROLS AND DEFAULT SETTINGS
 
 - Certain VMX controls are reserved and must be set to a specific value (0 or 1) determined by the processor.
 - The specific value to which a reserved control must be set is its **default setting**.
@@ -1076,10 +1124,10 @@ The VMCS data are organized into six logical groups:
   - **Default0**. These are (or have been) reserved with a default setting of 0.
   - **Default1**. They are (or have been) reserved with a default setting of 1.
 
-## VMX-FIXED BITS IN CR0
+### VMX-FIXED BITS IN CR0
 
 - Each bit in CR0 is either fixed to 0 (with value 0 in both MSRs), fixed to 1 (1 in both MSRs), or flexible (0 in `IA32_VMX_CR0_FIXED0` and 1 in `IA32_VMX_CR0_FIXED1`).
 
-## VMX-FIXED BITS IN CR4
+### VMX-FIXED BITS IN CR4
 
 - Each bit in CR4 is either fixed to 0 (with value 0 in both MSRs), fixed to 1 (1 in both MSRs), or flexible (0 in `IA32_VMX_CR4_FIXED0` and 1 in `IA32_VMX_CR4_FIXED1`).
