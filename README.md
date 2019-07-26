@@ -1,25 +1,26 @@
 # CPU Internals
 > These notes are taken from Intel SDM. You can consider them as a short/resumed version of some parts of the manuals that I found worth looking at when learning about system programming, OS internals or virtualization.
 
-### Contents
+## Contents
+
 - [Volume 1 Basic Architecture](#volume-1-basic-architecture)
-    - [Chapter 3 Basic Execution Environment](##chapter-3-basic-execution-environment)
-    - [Chapter 6 Procedure Calls, Interrupts, and Exceptions](##chapter-6-procedure-calls-interrupts-and-exceptions)
-- [Volume 2 Instruction Set Reference](volume-2-instruction-set-reference)
-    - [Chapter 6 Safer Mode Extensions Reference](###chapter-6-safer-mode-extensions-reference)
-- [Volume 3 System Programming Guide](##volume-3-system-programming-guide)
-    - [Chapter 2 System Architecture Overview](##chapter-2-system-architecture-overview)
-    - [Chapter 3 Protected Mode Memory Management](##chapter-3-protected-memory-mode-management)
-    - [Chapter 4 Paging](##chapter-4-paging)
-    - [Chapter 6 Interrupt and Exception Handling](##chapter-6-interrupt-and-exception-handling)
-    - [Chapter 11 Memory Cache Control](##chapter-11-memory-cache-control)
-    - [Chapter 17 Debug, Branch Profile, TSC, and Intel® Resource Director Technology (Intel® RDT) Features](##Debug)
-    - [Chapter 22 Architecture Compatibility](##chapter-22-architecture-compatibility)
-    - [Chapter 23 Introduction To Virtual Machine Extensions](##chapter-23-introduction-to-virtual-machine-extensions)
-    - [Chapter 24 Virtual Machine Control Structures](##chapter-24-virtual-machine-control-structures)
-    - [Chapter 25 VMX Non-Root Operation](##chapter-25-vmx-non-root-operation)
-    - [Chapter 28 VMX Support For Address Translation](##chapter-28-vmx-support-for-address-translation)
-    - [Chapter 30 VMX Instruction Reference](##chapter-30-vmx-instruction-reference)
+    - [Chapter 3 Basic Execution Environment](#chapter-3-basic-execution-environment)
+    - [Chapter 6 Procedure Calls, Interrupts, and Exceptions](#chapter-6-procedure-calls-interrupts-and-exceptions)
+- [Volume 2 Instruction Set Reference](#volume-2-instruction-set-reference)
+    - [Chapter 6 Safer Mode Extensions Reference](#chapter-6-safer-mode-extensions-reference)
+- [Volume 3 System Programming Guide](#volume-3-system-programming-guide)
+    - [Chapter 2 System Architecture Overview](#chapter-2-system-architecture-overview)
+    - [Chapter 3 Protected Mode Memory Management](#chapter-3-protected-memory-mode-management)
+    - [Chapter 4 Paging](#chapter-4-paging)
+    - [Chapter 6 Interrupt and Exception Handling](#chapter-6-interrupt-and-exception-handling)
+    - [Chapter 11 Memory Cache Control](#chapter-11-memory-cache-control)
+    - [Chapter 17 Debug, Branch Profile, TSC, and Intel® Resource Director Technology (Intel® RDT) Features](#Debug)
+    - [Chapter 22 Architecture Compatibility](#chapter-22-architecture-compatibility)
+    - [Chapter 23 Introduction To Virtual Machine Extensions](#chapter-23-introduction-to-virtual-machine-extensions)
+    - [Chapter 24 Virtual Machine Control Structures](#chapter-24-virtual-machine-control-structures)
+    - [Chapter 25 VMX Non-Root Operation](#chapter-25-vmx-non-root-operation)
+    - [Chapter 28 VMX Support For Address Translation](#chapter-28-vmx-support-for-address-translation)
+    - [Chapter 30 VMX Instruction Reference](#chapter-30-vmx-instruction-reference)
 
 ## Volume 1 Basic Architecture
 
