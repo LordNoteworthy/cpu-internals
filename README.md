@@ -666,21 +666,27 @@ the calling procedure.
   - The **NXE** enables execute-disable access rights for PAE paging and 4-level paging. If IA32_EFER.NXE = 1,
     instruction fetches can be prevented from specified linear addresses
 
-#### HIERARCHICAL PAGING STRUCTURES: AN OVERVIEW
+#### Hierarchical Paging Structures: An Overview
+
+- Every paging structure is **4096** Bytes in size and comprises a number of individual **entries**.
+- The processor uses the upper portion of a linear address to identify a series of paging-structure entries.
+- The last of these entries identifies the physical address of the region to which the linear address translates (called **the page frame**).
+- The lower portion of the linear address (called the **page offset**) identifies the specific address within that region to which the linear address translates.
+- The first paging structure used for any translation is located at the physical address in **CR3**.
 
 - **32-bit paging**:
-  - each paging structure comprises 1024 = 2^10 entries.
+  - each paging structure comprises 1024 = 2^10 entries, each entry is 32 bits (4 bytes).
   - For this reason, the translation process uses 10 bits at a time from a 32-bit linear address.
   - Bits 31:22 identify the first paging-structure entry and bits 21:12 identify a second.
   - The latter identifies the page frame. Bits 11:0 of the linear address are the page offset within the 4-KByte page frame.
 - **PAE paging**:
-  - the first paging structure comprises only 4 = 2^2 entries.
+  - the first paging structure comprises only 4 = 2^2 entries, each entry is 64 bits (8 bytes).
   - Translation thus begins by using bits 31:30 from a 32-bit linear address to identify the first paging-structure entry.
   - Other paging structures comprise 512 =2^9 entries, so the process continues by using 9 bits at a time.
   - Bits 29:21 identify a second paging-structure entry and bits 20:12 identify a third.
   - This last identifies the page frame.
 - **4-level paging**:
-  - each paging structure comprises 512 = 2^9 entries and translation uses 9 bits at a time from a 48-bit linear address.
+  - each paging structure comprises 512 = 2^9 entries (each entry is 64 bits (8 bytes)) and translation uses 9 bits at a time from a 48-bit linear address.
   - Bits 47:39 identify the first paging-structure entry, bits 38:30 identify a second, bits 29:21 a third, and bits 20:12 identify a fourth.
   - Again, the last identifies the page frame.
 
@@ -688,12 +694,13 @@ the calling procedure.
 
 #### 32-BIT PAGING
 
+- 32-bit paging may map linear addresses to either 4-KByte pages or 4-MByte pages. 
 <p align="center"> <img src="https://i.imgur.com/yk5DDik.png" width="500px" height="auto"></p>
 <p align="center"> <img src="https://i.imgur.com/graLHn1.png" width="500px" height="auto"></p>
 
 #### PAE PAGING
 
-- With PAE paging, a logical processor maintains a set of four (4) PDPTE registers (64-bits), which are loaded from an address in CR3.
+- With PAE paging, a logical processor maintains a set of **four PDPTE** registers (64-bits), which are loaded from an address in CR3.
 - Linear address are translated using 4 hierarchies of in-memory paging structures, each located using one of the **PDPTE registers**. (This is different from the other paging modes, in which there is one hierarchy referenced by CR3.
 - Each PDPTE controls access to a 1-GByte region of the linear-address space.
 - Bits 31:30 of the linear address select a PDPTE register; this is PDPTE*i*, where _i_ is the value of bits 31:30.
@@ -705,7 +712,7 @@ the calling procedure.
 
 #### 4-LEVEL PAGING
 
-- Use of CR3 with 4-level paging depends on whether processcontext identifiers (PCIDs) have been enabled by setting CR4.PCIDE
+- Use of CR3 with 4-level paging depends on whether process context identifiers (PCIDs) have been enabled by setting CR4.PCIDE
 
 <p align="center"> <img src="https://i.imgur.com/ycLpWUf.png" width="500px" height="auto"></p>
 <p align="center"> <img src="https://i.imgur.com/s6dZ8fY.png" width="500px" height="auto"></p>
