@@ -51,6 +51,14 @@
 - The [APIC](https://wiki.osdev.org/APIC) is a split architecture design, with a local component (LAPIC) usually integrated into the processor itself, and an optional I/O APIC on a system bus.
 - The `CPUID.01h:EDX[bit 9]` flag specifies whether a CPU has a built-in local APIC.
 
+### PIT
+
+- **Programmable Interval Timer (PIT)** is a counter that generates an output signal when it reaches a programmed count. 
+- The output signal may trigger an interrupt.
+- PITs may be one-shot or periodic.
+- One-shot timers will signal only once and then stop counting.
+- Periodic timers signal every time they reach a specific value and then restart, thus producing a signal at periodic intervals.
+
 ### Input–output memory management unit (IOMMU)
 
 - is a memory management unit (MMU) that connects a DMA-capable I/O bus to the main memory.
