@@ -1,17 +1,39 @@
-### System Bus
+### Bus
 
-- A system bus is a single computer bus that connects the major components of a computer system, combining the functions of a data bus to carry information, an address bus to determine where it should be sent, and a control bus to determine its operation.
+- The idea of a bus is simple, it lets you connect components to the computer's processor. 
+- The graphics card talks to the processor using the computer's bus as a communication path.
+- The advantage of a bus is that it makes parts more interchangeable
+
+### System bus or local bus
+
+- is a single bus that connects the major components of a computer system, combining the functions of a data bus to carry information, an address bus to determine where it should be sent, and a control bus to determine its operation.
 - The technique was developed to reduce costs and improve modularity, and although popular in the 1970s and 1980s, more modern computers use a variety of separate buses adapted to more specific needs.
+- Is the fastest bus in the system.
 
 <p align="center"> 
     <img src="https://i.imgur.com/XoCAfrl.png" width="400px" height="auto">
+</p>
+
+### Slower Bus
+
+- for communicating with things like hard disks and sound cards.
+- One very common bus of this type is known as the PCI bus.
+- These slower buses connect to the system bus through a bridge, which is a part of the computer's chipset and acts as a traffic cop, integrating the data from the other buses to the system bus.
+
+### Peripheral Component Interconnect
+
+- PCI presents a hybrid of sorts between ISA and VL-Bus.
+- It provides direct access to system memory for connected devices, but uses a bridge to connect to the frontside bus and therefore to the CPU.
+- Basically, this means that it is capable of even higher performance than VL-Bus while eliminating the potential for interference with the CPU.
+
+<p align="center"> 
+    <img src="https://i.imgur.com/EpWARck.png" width="300px" height="auto">
 </p>
 
 ### Serial Bus
 
 - Many communication systems were generally designed to connect two integrated circuits on the same printed circuit board, connected by signal traces on that board (rather than external cables).
 - Integrated circuits are more expensive when they have more pins. To reduce the number of pins in a package, many ICs use a serial bus to transfer data when speed is not important. Some examples of such low-cost serial buses include RS-232, SPI, I²C, DC-BUS, UNI/O, 1-Wire and PCI Express.
-
 
 ### Memory-mapped IO vs Port-mapped IO
 
@@ -86,4 +108,13 @@
 
 ### Bus snooping
 
-- Bus snooping or bus sniffing is a scheme by which a coherency controller (snooper) in a cache monitors or snoops the bus transactions, and its goal is to maintain a cache coherency in distributed shared memory systems.[citation needed] A cache containing a coherency controller (snooper) is called a snoopy cache
+- Bus snooping or bus sniffing is a scheme by which a coherency controller (snooper) in a cache monitors or snoops the bus transactions, and its goal is to maintain a cache coherency in distributed shared memory systems.
+- A cache containing a coherency controller (snooper) is called a snoopy cache.
+
+### Load-Store Architcture
+
+- is an ISA that divides instructions into two categories:
+    - memory access (load and store between memory and registers)
+    - and ALU operations (which only occur between registers).
+- RISC ISAs such as PowerPC, SPARC, RISC-V, ARM, and MIPS are load–store architectures.
+- For instance, in a load–store approach both operands and destination for an ADD operation must be in registers. This differs from a register–memory architecture (for example, a CISC instruction set architecture such as x86) in which one of the operands for the ADD operation may be in memory, while the other is in a register
