@@ -26,7 +26,7 @@
 - It provides direct access to system memory for connected devices, but uses a bridge to connect to the frontside bus and therefore to the CPU.
 - Basically, this means that it is capable of even higher performance than VL-Bus while eliminating the potential for interference with the CPU.
 
-<p align="center"> 
+<p align="center">
     <img src="https://i.imgur.com/EpWARck.png" width="300px" height="auto">
 </p>
 
@@ -34,6 +34,24 @@
 
 - Many communication systems were generally designed to connect two integrated circuits on the same printed circuit board, connected by signal traces on that board (rather than external cables).
 - Integrated circuits are more expensive when they have more pins. To reduce the number of pins in a package, many ICs use a serial bus to transfer data when speed is not important. Some examples of such low-cost serial buses include RS-232, SPI, I²C, DC-BUS, UNI/O, 1-Wire and PCI Express.
+
+### Chipset
+
+- is a set of (chips) electronic components in an integrated circuit known as a "Data Flow Management System" that manages the data flow between the processor, memory and peripherals.
+- usually designed to work with a specific family of microprocessors.
+- historically, chips (for keyboard controller, memory controller, ...) were scattered arround the motherboard. With time, engineers reduced the number of chips to the same job and condenced them to only a few chips or what is now called a __chipset__.
+- recently, the north bridge were built inside the CPU to maximize performance (1 jump instead of 2 from south bridge + performance sensitive devices talks directly to the CPU without the latency addded by north bridge) and the south bridge is called __Platform Controller Hub__.
+
+
+### Northbridge/Southbridge
+
+- __Northbridge__ is the chip whose main role is to connect (provide a bridge between) the CPU and the RAM memory. It also connects the CPU to the AGP and PCI Express slots. These are all processes which have to go really fast.
+- The __Southbridge__ is more relaxed and connects the CPU via the Northbridge to the I/O devices. E.g. ATA hard drives, USBs, standard PCI slots, sound and Ethernet. These connections (bridges) are actually very fast but by comparison with the CPU are they slow.
+ 
+<p align="center"> 
+  <img src="https://i.imgur.com/hBE3n10.png" width="300px" height="auto">
+</p>
+
 
 ### Memory-mapped IO vs Port-mapped IO
 
