@@ -35,6 +35,11 @@
 - Many communication systems were generally designed to connect two integrated circuits on the same printed circuit board, connected by signal traces on that board (rather than external cables).
 - Integrated circuits are more expensive when they have more pins. To reduce the number of pins in a package, many ICs use a serial bus to transfer data when speed is not important. Some examples of such low-cost serial buses include RS-232, SPI, I²C, DC-BUS, UNI/O, 1-Wire and PCI Express.
 
+### SMBus
+
+- __System Management Bus__ (SMBus or SMB) is a single-ended simple two-wire bus for the purpose of lightweight communication.
+- Most commonly it is found in computer motherboards for communication with the power source for ON/OFF instructions. 
+
 ### Chipset
 
 - is a set of (chips) electronic components in an integrated circuit known as a "Data Flow Management System" that manages the data flow between the processor, memory and peripherals.
@@ -45,7 +50,7 @@
 
 ### Northbridge/Southbridge
 
-- __Northbridge__ is the chip whose main role is to connect (provide a bridge between) the CPU and the RAM memory. It also connects the CPU to the AGP and PCI Express slots. These are all processes which have to go really fast.
+- __Northbridge__  or (host bridge) is the chip whose main role is to connect the CPU and the RAM memory. It also connects the CPU to the AGP and PCI Express slots. These are all processes which have to go really fast.
 - The __Southbridge__ is more relaxed and connects the CPU via the Northbridge to the I/O devices. E.g. ATA hard drives, USBs, standard PCI slots, sound and Ethernet. These connections (bridges) are actually very fast but by comparison with the CPU are they slow.
  
 <p align="center"> 
