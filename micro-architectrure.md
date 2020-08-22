@@ -20,15 +20,28 @@
 - One very common bus of this type is known as the PCI bus.
 - These slower buses connect to the system bus through a bridge, which is a part of the computer's chipset and acts as a traffic cop, integrating the data from the other buses to the system bus.
 
-### Peripheral Component Interconnect
+### Industry Standard Architecture (ISA) 
+
+- is the 16-bit internal bus of IBM PC/AT and similar computers based on the Intel 80286 and its immediate successors during the 1980s. 
+- The bus was (largely) backward compatible with the 8-bit bus of the 8088-based IBM PC, including the IBM PC/XT as well as IBM PC compatibles.
+- superseded by	PCI, AGP.
+- speed: 8MB/s, up to 16 devices.
+- was the basis for development of the ATA interface, used for ATA (a.k.a. IDE) and more recently Serial ATA (SATA) hard disks.
+
+### Peripheral Component Interconnect (PCI)
 
 - PCI presents a hybrid of sorts between ISA and VL-Bus.
-- It provides direct access to system memory for connected devices, but uses a bridge to connect to the frontside bus and therefore to the CPU.
-- Basically, this means that it is capable of even higher performance than VL-Bus while eliminating the potential for interference with the CPU.
+- provides direct access to system memory for connected devices, but uses a bridge to connect to the frontside bus and therefore to the CPU. Basically, this means that it is capable of even higher performance than VL-Bus while eliminating the potential for interference with the CPU.
 
 <p align="center">
     <img src="https://i.imgur.com/EpWARck.png" width="300px" height="auto">
 </p>
+
+### Bridge
+
+- a PCI bridge is a hardware connection between two different buses. 
+- the bridge may be PCI to PCI, PCI to ISA or some other kind of bus. Bus standards are limited by electrical characteristics. - adding devices called bridges allows the buses to be expanded.
+- a PCI bridge allows expansion of the PCI bus by adding more buses to the system.
 
 ### Serial Bus
 
