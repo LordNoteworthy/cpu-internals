@@ -1023,7 +1023,7 @@ The VMCS data are organized into six logical groups:
 
 #### VMCS Layout
 
-- The VMCS layout is available in a form of table here: [VMCS Layout.pdf](../master/pdf/VMCS.pdf)
+- The VMCS layout is available in a form of table here: [VMCS Layout.pdf](../master/VMCS-Layout.pdf)
 
 #### VMCS Types: Ordinary And Shadow
 

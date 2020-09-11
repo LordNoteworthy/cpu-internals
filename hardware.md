@@ -167,3 +167,28 @@ This page contains basic concepts I stumbled upon during my journey on learning 
 - most modern desktop or workstation microprocessors use an integrated memory controller (IMC), including microprocessors from Intel, AMD, and those built around the ARM architecture.
 - one of the downfalls to RAM is that it must be supplied with a constant flow of power in order to operate. As soon as the influx of power stops, the information stored in RAM chips is lost. The memory controller fulfills this need by "refreshing" the RAM at a constant rate while the computer is powered on.
 
+## RAM types
+
+- DRAM is memory which contains capacitors.
+  - capacitors are small buckets which store electricity.
+  - capacitors have to be refreshed with electricity constantly.
+  - operates async with the system clock.
+- SDRAM: synchronous Dynamic RAM
+  - have also capacitors like DRAM
+  - but difference is speed, it operates in sync with the system clock
+- DIMM supercedes SIMM (which have a 32 bits at a time) and have 64 bit data path
+- pc-100: the speed at which it operates (100Mhz * 8) = 800MB/s
+- RIMM: Rambus Inline Memory Module
+  - has 184 pins
+  - looks similar to DIMMs
+  - bottom notches are near the center of the module
+  - was a breakthrough in the 90s, but quickly fall behinf DIMM.
+- DDR: Double Date Rate
+  - DDR: sends the double the amount of data in each clock signal compared to a non DDR + have 184 pins.
+  - DDR2 allows for higher bus speeds, uses less power, and has more pins (240).
+  - DDR3 is twice as fast as DDR2, also have 240 pins, bottom nutches are in different places
+  - DDR4 uses less power than previous generation, have 288 pins, higher range of speed than DDR3
+- NVDIMM: A non-volatile dual in-line memory module (NVDIMM) 
+  - is memory that retains its contents even when electrical power is removed, for example from an unexpected power loss, system crash, or normal shutdown.
+  - "Dual in-line" identifies the memory as using the DIMM package. NVDIMMs improve application performance[1][failed verification] and system crash recovery time. 
+  - They enhance solid-state drive (SSD) endurance and reliability
