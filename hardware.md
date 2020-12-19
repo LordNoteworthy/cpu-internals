@@ -182,7 +182,7 @@ This page contains basic concepts I stumbled upon during my journey on learning 
   - has 184 pins
   - looks similar to DIMMs
   - bottom notches are near the center of the module
-  - was a breakthrough in the 90s, but quickly fall behinf DIMM.
+  - was a breakthrough in the 90s, but quickly fall behind DIMM.
 - DDR: Double Date Rate
   - DDR: sends the double the amount of data in each clock signal compared to a non DDR + have 184 pins.
   - DDR2 allows for higher bus speeds, uses less power, and has more pins (240).
