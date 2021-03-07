@@ -922,13 +922,18 @@ assigned to regions of physical memory based on linear address mappings.
 #### Introduction To VMX Operation
 
 - Processor support for virtualization is provided by a form of processor operation called VMX (Virtual Machine eXtensions).
-- There are two kind of VMX operations: - VMX root operation (VMM will generally run here). - VMX non-root operation (VM will generally run here).
-
-* The main differences between these two modes is that in root mode, a new set of new instructions (VMX instructions) is available and that the values that can be loaded into certain control registers are limited.
+- There are two kind of VMX operations: 
+  - VMX root operation (VMM will generally run here).
+  - VMX non-root operation (VM will generally run here).
+- The main differences between these two modes is that in root mode, a new set of new instructions (VMX instructions) is available and that the values that can be loaded into certain control registers are limited.
 
 #### Life Cycle of VMM Software
 
-- The following items summarize the life cycle of a VMM and its guest software as well as the interactions between them: - Software enters VMX operation by executing a VMXON instruction. - Using VM entries, a VMM can then turn guests into VMs (one at a time). The VMM effects a VM entry using instructions VMLAUNCH and VMRESUME; it regains control using VM exits. - VM exits transfer control to an entry point specified by the VMM. The VMM can take action appropriate to the cause of the VM exit and can then return to the VM using a VM entry. - Eventually, the VMM may decide to shut itself down and leave VMX operation. It does so by executing the VMXOFF instruction.
+- The following items summarize the life cycle of a VMM and its guest software as well as the interactions between them:
+  - Software enters VMX operation by executing a VMXON instruction.
+  - Using VM entries, a VMM can then turn guests into VMs (one at a time). The VMM effects a VM entry using instructions VMLAUNCH and VMRESUME; it regains control using VM exits.
+  - VM exits transfer control to an entry point specified by the VMM. The VMM can take action appropriate to the cause of the VM exit and can then return to the VM using a VM entry.
+  - Eventually, the VMM may decide to shut itself down and leave VMX operation. It does so by executing the VMXOFF instruction.
 
 <p align="center"><img src="https://i.imgur.com/Vpvq9Gi.png"  width="400px" height="auto"></p>
 
@@ -1013,7 +1018,6 @@ assigned to regions of physical memory based on linear address mappings.
 #### Organization Of VMCS Data
 
 The VMCS data are organized into six logical groups:
-
 - Guest-state area: Processor state is saved into the guest-state area on VM exits and loaded from there on VM entries.
 - Host-state area: Processor state is loaded from the host-state area on VM exits.
 - VM-execution control fields: These fields control processor behavior in VMX non-root operation. They determine in part the causes of VM exits.

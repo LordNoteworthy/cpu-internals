@@ -30,7 +30,7 @@ This page contains basic concepts I stumbled upon during my journey on learning 
 - the bus was (largely) backward compatible with the 8-bit bus of the 8088-based IBM PC, including the IBM PC/XT as well as IBM PC compatibles.
 - superseded by PCI and AGP.
 - speed: 8MB/s, up to 16 devices.
-- was the basis for development of the ATA interface, used for ATA (a.k.a. IDE) and more recently Serial ATA (SATA) hard disks.
+- was the basis for development of the ATA interface, used for Parallel ATA (IDE) and more recently Serial ATA (SATA) hard disks.
 
 ## Peripheral Component Interconnect (PCI)
 
@@ -192,3 +192,19 @@ This page contains basic concepts I stumbled upon during my journey on learning 
   - is memory that retains its contents even when electrical power is removed, for example from an unexpected power loss, system crash, or normal shutdown.
   - "Dual in-line" identifies the memory as using the DIMM package. NVDIMMs improve application performance[1][failed verification] and system crash recovery time. 
   - They enhance solid-state drive (SSD) endurance and reliability
+
+## IDE vs SATA
+
+- Parallel ATA (PATA) also known as ATA or IDE is an interface standard for connection of storages devices such as Hard Disk Drives (HDD), Solid State Drives (SSD) and CD/DVD drives to the computer.
+- IDE does not suppot hot plugging, its max speed is 133MB/s, and the IDE cables are wide and can be up to 18 inches long.
+- SATA does support hot plugging, transfer speed goes to 300MB/s, and SATA cable can be narrow and can be up to 39 inches long.
+- IDE drives are slower than SATA drives and they have a parallel connection.
+- IDE has a single cable for data and power.
+
+## SCSI
+
+- is a set of standards for physically connecting and transferring data between computers and peripheral devices. The SCSI standards define commands, protocols, electrical, optical and logical interfaces.
+- SCSI drives will be more __reliable__ simple because they are built better.
+- They are designed and priced to be put into __high end machines__ - primarily servers where they will get a lot of abuse and quite possibly run 24/7/365 for 5-7 years.
+- They are made of higher quality parts, etc. SATA drives are __consumer grade__ drives. They are made as cheaply as possible and are not designed with the kind of workloads Servers typically do in mind.
+- As far as speed, you will actually see a fairly big difference in speed just do to the spindle speeds of the SCSI devices being so much higher. You're talking 7200 RPM vs 15k RPM on the high ends of both devices. The faster spindle speed, gives you lower latency and higher access speeds.
