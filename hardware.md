@@ -182,7 +182,7 @@ This page contains basic concepts I stumbled upon during my journey on learning 
   - has 184 pins
   - looks similar to DIMMs
   - bottom notches are near the center of the module
-  - was a breakthrough in the 90s, but quickly fall behinf DIMM.
+  - was a breakthrough in the 90s, but quickly fall behind DIMM.
 - DDR: Double Date Rate
   - DDR: sends the double the amount of data in each clock signal compared to a non DDR + have 184 pins.
   - DDR2 allows for higher bus speeds, uses less power, and has more pins (240).
@@ -190,7 +190,7 @@ This page contains basic concepts I stumbled upon during my journey on learning 
   - DDR4 uses less power than previous generation, have 288 pins, higher range of speed than DDR3
 - NVDIMM: A non-volatile dual in-line memory module (NVDIMM) 
   - is memory that retains its contents even when electrical power is removed, for example from an unexpected power loss, system crash, or normal shutdown.
-  - "Dual in-line" identifies the memory as using the DIMM package. NVDIMMs improve application performance[1][failed verification] and system crash recovery time. 
+  - "Dual in-line" identifies the memory as using the DIMM package. NVDIMMs improve application performance and system crash recovery time. 
   - They enhance solid-state drive (SSD) endurance and reliability
 
 ## IDE vs SATA
